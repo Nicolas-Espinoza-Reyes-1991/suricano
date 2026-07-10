@@ -1,7 +1,7 @@
-# Cloudflare Pages headers — ayuda a crawlers de WhatsApp/Facebook
+# Cloudflare Pages headers
 /og.jpg
   Content-Type: image/jpeg
-  Cache-Control: public, max-age=3600
+  Cache-Control: public, max-age=60
   Access-Control-Allow-Origin: *
 
 /assets/*

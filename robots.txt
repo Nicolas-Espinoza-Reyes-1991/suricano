@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://nicolas-espinoza-reyes-1991.github.io/suricano/sitemap.xml
+Sitemap: https://suricano.pages.dev/sitemap.xml

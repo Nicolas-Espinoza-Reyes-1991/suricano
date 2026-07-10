@@ -239,24 +239,69 @@
       <div class="section-inner">
         <p class="eyebrow reveal">La carta</p>
         <h2 class="section-title reveal">Burritos que pegan</h2>
-        <p class="section-lead reveal">Todos vienen de a dos. Elige solo burrito o súmale papas y arma tu pedido por WhatsApp.</p>
+        <p class="section-lead reveal">Elige categoría, filtra en un toque y arma el pedido. Todo se suma al carrito.</p>
 
-        <div class="spotlight reveal" id="spotlight"></div>
+        <nav class="shop-rail reveal" id="shopRail" aria-label="Categorías de compra">
+          <button type="button" class="shop-rail-btn is-active" data-shop="burritos">
+            Burritos
+          </button>
+          <button type="button" class="shop-rail-btn" data-shop="papas">
+            Papas
+          </button>
+          <button type="button" class="shop-rail-btn" data-shop="bebidas">
+            Bebidas
+          </button>
+        </nav>
 
-        <div class="menu-toolbar reveal">
-          <div class="menu-heading">
-            <h3 id="menuHeading">Burritos</h3>
-            <p id="menuSubheading">14 productos</p>
+        <div class="catalog-block catalog-block--first" id="burritos">
+          <div class="menu-toolbar" id="menuToolbar">
+            <div class="menu-heading">
+              <h3 id="menuHeading">Burritos</h3>
+              <p id="menuSubheading">14 productos · de a dos</p>
+            </div>
+            <div class="menu-filters menu-filters--seg" role="tablist" aria-label="Tipo de burrito">
+              <button class="filter-btn is-active" role="tab" aria-selected="true" data-filter="todos">
+                Todos <span class="filter-count">14</span>
+              </button>
+              <button class="filter-btn" role="tab" aria-selected="false" data-filter="solo">
+                Solo <span class="filter-count">7</span>
+              </button>
+              <button class="filter-btn" role="tab" aria-selected="false" data-filter="papas">
+                Combo + papas <span class="filter-count">7</span>
+              </button>
+            </div>
           </div>
-          <div class="menu-filters" role="tablist" aria-label="Filtros de la carta">
-            <span class="menu-filters-label">Elige</span>
-            <button class="filter-btn is-active" role="tab" aria-selected="true" data-filter="todos">Todos</button>
-            <button class="filter-btn" role="tab" aria-selected="false" data-filter="solo">Solo burrito</button>
-            <button class="filter-btn" role="tab" aria-selected="false" data-filter="papas">Con papas</button>
-          </div>
+          <div class="menu-grid" id="menuGrid" aria-live="polite"></div>
         </div>
 
-        <div class="menu-grid" id="menuGrid" aria-live="polite"></div>
+        <div class="catalog-block" id="papas">
+          <div class="menu-toolbar catalog-toolbar" id="papasToolbar">
+            <div class="menu-heading">
+              <h3>Papas</h3>
+              <p id="papasSubheading">6 productos</p>
+            </div>
+            <div class="menu-filters menu-filters--seg" role="tablist" aria-label="Tamaño de porción">
+              <button class="filter-btn is-active" role="tab" aria-selected="true" data-papas-size="1">
+                Individual <span class="filter-count">6</span>
+              </button>
+              <button class="filter-btn" role="tab" aria-selected="false" data-papas-size="2">
+                Para 2 <span class="filter-count">6</span>
+              </button>
+              <button class="filter-btn" role="tab" aria-selected="false" data-papas-size="4">
+                XL · 4 <span class="filter-count">6</span>
+              </button>
+            </div>
+          </div>
+          <div class="menu-grid" id="papasGrid" aria-live="polite"></div>
+        </div>
+
+        <div class="catalog-block" id="bebidas">
+          <div class="menu-heading">
+            <h3>Bebidas</h3>
+            <p>2 productos</p>
+          </div>
+          <div class="menu-grid menu-grid--pair" id="drinksGrid" aria-live="polite"></div>
+        </div>
       </div>
     </section>
 
@@ -320,6 +365,13 @@
         <p class="order-empty-hint">Elige un burrito de la carta y vuelve aquí para enviarlo.</p>
         <a class="btn btn-primary btn-sm" href="#carta" data-close-cart>Ver la carta</a>
       </div>
+      <div class="extras-panel" id="extrasPanel" hidden>
+        <div class="extras-head">
+          <h3>¿Sumas extras?</h3>
+          <p>Opcional · toca + para agregar</p>
+        </div>
+        <div class="extras-groups" id="extrasGroups"></div>
+      </div>
     </div>
     <div class="order-footer" id="orderFooter" hidden>
       <div class="order-total">
@@ -367,6 +419,20 @@
   <div class="toast" id="toast" role="status" aria-live="polite">
     <span class="toast-msg" id="toastMsg"></span>
     <button type="button" class="toast-action" id="toastAction" hidden>Ver</button>
+  </div>
+
+  <div class="pote-modal" id="poteModal" hidden>
+    <div class="pote-dialog" role="dialog" aria-modal="true" aria-labelledby="poteTitle">
+      <button type="button" class="pote-close" id="poteClose" aria-label="Cerrar">×</button>
+      <h3 id="poteTitle">Elige 3 aderezos</h3>
+      <p class="pote-sub" id="poteSub">Selecciona exactamente 3 sabores</p>
+      <div class="pote-options" id="poteOptions"></div>
+      <p class="pote-count"><strong id="potePicked">0</strong>/3 elegidos</p>
+      <div class="pote-actions">
+        <button type="button" class="btn btn-ghost btn-ghost-ink" id="poteCancel">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="poteConfirm" disabled>Agregar al pedido</button>
+      </div>
+    </div>
   </div>
 
   <script src="js/main.js"></script>

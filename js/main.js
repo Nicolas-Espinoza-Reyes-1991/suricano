@@ -13,7 +13,10 @@
     address: "Av. Principal 123, tu ciudad",
   };
 
-  const IMG = "img_carta";
+  const IMG = "img_carta/burros";
+  const IMG_DRINKS = "img_carta/bebidas";
+  const IMG_PAPAS = "img_carta/papas";
+  const papaImg = (file) => encodeURI(`${IMG_PAPAS}/${file}`);
 
   const MENU = [
     {
@@ -28,6 +31,7 @@
       image: `${IMG}/burritos_suricano_x2.webp`,
       featured: true,
       spotlight: true,
+      spotlightRank: 2,
       spotlightLabel: "El de la casa",
     },
     {
@@ -78,6 +82,7 @@
       image: `${IMG}/burritos_wey_x2.webp`,
       featured: true,
       spotlight: true,
+      spotlightRank: 3,
       spotlightLabel: "El más completo",
     },
     {
@@ -104,6 +109,7 @@
       image: `${IMG}/burritos_guacamole_mixto_x2.webp`,
       featured: true,
       spotlight: true,
+      spotlightRank: 1,
       spotlightLabel: "El más pedido",
     },
     {
@@ -192,15 +198,254 @@
     },
   ];
 
+  const DRINKS = [
+    {
+      id: "coca-500",
+      name: "Coca-Cola 500 cc",
+      price: 2500,
+      kind: "drink",
+      featured: true,
+      image: `${IMG_DRINKS}/bebida_cocacola_500.webp`,
+    },
+    {
+      id: "coca-15l",
+      name: "Coca-Cola 1.5L (Cero o Normal)",
+      price: 3500,
+      kind: "drink",
+      featured: true,
+      image: `${IMG_DRINKS}/bebida_cocacola_15l.webp`,
+    },
+  ];
+
+  const PAPAS = [
+    {
+      id: "papa-frita",
+      name: "Papa frita",
+      price: 5000,
+      kind: "papas",
+      size: 1,
+      image: papaImg("papas_papa_frita (1).webp"),
+    },
+    {
+      id: "salchi-normal",
+      name: "Salchi normal",
+      price: 5500,
+      kind: "papas",
+      size: 1,
+      image: papaImg("papas_salchi_normal.webp"),
+    },
+    {
+      id: "salchi-suprema",
+      name: "Salchi Suprema",
+      price: 6000,
+      kind: "papas",
+      size: 1,
+      featured: true,
+      desc: "Papa natural, salchicha, salsa queso cheddar, salsa sour, tomate y cebollín.",
+      image: papaImg("papas_salchi_suprema (1).webp"),
+    },
+    {
+      id: "papa-suprema-frijol",
+      name: "Papa Suprema Frijol",
+      price: 6000,
+      kind: "papas",
+      size: 1,
+      desc: "Papa natural, frijol negro salteado y sazonado, salsa queso cheddar, salsa sour, tomate y cebollín.",
+      image: papaImg("papas_suprema_frijol.webp"),
+    },
+    {
+      id: "papa-suprema",
+      name: "Papa Suprema",
+      price: 7000,
+      kind: "papas",
+      size: 1,
+      featured: true,
+      desc: "Papa natural, carne, salsa queso cheddar, salsa sour, tomate y cebollín.",
+      image: papaImg("papas_papa_suprema_carne.webp"),
+    },
+    {
+      id: "papa-chicken",
+      name: "Papa Chicken",
+      price: 7000,
+      kind: "papas",
+      size: 1,
+      featured: true,
+      desc: "Papas naturales, pollo sazonado con cebolla, choclo y ciboulette.",
+      image: papaImg("papas_papa_chicken (1).webp"),
+    },
+    {
+      id: "papa-frita-2",
+      name: "Papa frita (para 2)",
+      price: 7000,
+      kind: "papas",
+      size: 2,
+      image: papaImg("papas_papa_frita (1).webp"),
+    },
+    {
+      id: "salchi-normal-2",
+      name: "Salchi normal (para 2)",
+      price: 9000,
+      kind: "papas",
+      size: 2,
+      image: papaImg("papas_salchi_normal.webp"),
+    },
+    {
+      id: "salchi-suprema-2",
+      name: "Salchi Suprema (para 2)",
+      price: 9500,
+      kind: "papas",
+      size: 2,
+      featured: true,
+      desc: "Papa natural, salchicha, salsa queso cheddar, salsa sour, tomate y cebollín.",
+      image: papaImg("papas_salchi_suprema (1).webp"),
+    },
+    {
+      id: "papa-suprema-frijol-2",
+      name: "Papa Suprema Frijol (para 2)",
+      price: 9500,
+      kind: "papas",
+      size: 2,
+      desc: "Papa natural, frijol negro salteado y sazonado, salsa queso cheddar, salsa sour, tomate y cebollín.",
+      image: papaImg("papas_suprema_frijol.webp"),
+    },
+    {
+      id: "papa-suprema-2",
+      name: "Papa Suprema (para 2)",
+      price: 10000,
+      kind: "papas",
+      size: 2,
+      featured: true,
+      desc: "Papa natural, carne, salsa queso cheddar, salsa sour, tomate y cebollín.",
+      image: papaImg("papas_papa_suprema_carne.webp"),
+    },
+    {
+      id: "papa-chicken-2",
+      name: "Papa Chicken (para 2)",
+      price: 10000,
+      kind: "papas",
+      size: 2,
+      featured: true,
+      desc: "Papas naturales, pollo sazonado con cebolla, choclo y ciboulette.",
+      image: papaImg("papas_papa_chicken (1).webp"),
+    },
+    {
+      id: "papa-frita-xl",
+      name: "Papa frita XL (para 4)",
+      price: 12000,
+      kind: "papas",
+      size: 4,
+      image: papaImg("papas_xl_papa_frita (1).webp"),
+    },
+    {
+      id: "salchi-normal-xl",
+      name: "Salchi normal XL (para 4)",
+      price: 14000,
+      kind: "papas",
+      size: 4,
+      image: papaImg("papas_xl_salchi_normal (1).webp"),
+    },
+    {
+      id: "salchi-suprema-xl",
+      name: "Salchi Suprema XL (para 4)",
+      price: 16000,
+      kind: "papas",
+      size: 4,
+      featured: true,
+      image: papaImg("papas_xl_salchi_suprema (1).webp"),
+    },
+    {
+      id: "papa-suprema-frijol-xl",
+      name: "Papa Suprema Frijol XL (para 4)",
+      price: 16000,
+      kind: "papas",
+      size: 4,
+      image: papaImg("papas_xl_suprema_frijol (1).webp"),
+    },
+    {
+      id: "papa-suprema-xl",
+      name: "Suprema XL (para 4)",
+      price: 17500,
+      kind: "papas",
+      size: 4,
+      featured: true,
+      image: papaImg("papas_xl_suprema (1).webp"),
+    },
+    {
+      id: "papa-pollo-xl",
+      name: "Pollo XL (para 4)",
+      price: 17500,
+      kind: "papas",
+      size: 4,
+      featured: true,
+      image: papaImg("papas_xl_chicken (1).webp"),
+    },
+  ];
+
+  const EXTRAS = [
+    { id: "ex-carne", name: "Carne", price: 2000, group: "proteinas" },
+    { id: "ex-pollo", name: "Pollo", price: 2000, group: "proteinas" },
+    { id: "ex-pollo-crema", name: "Pollo con crema", price: 2500, group: "proteinas" },
+    { id: "ex-champi", name: "Champiñón", price: 2500, group: "proteinas" },
+    { id: "ex-champi-crema", name: "Champiñón con crema", price: 3000, group: "proteinas" },
+    { id: "ex-frijol", name: "Frijol", price: 1000, group: "proteinas" },
+    { id: "ex-cebolla-caram", name: "Cebolla caramelizada", price: 1500, group: "vegetales" },
+    { id: "ex-choclo", name: "Choclo", price: 500, group: "vegetales" },
+    { id: "ex-pepinillos", name: "Pepinillos", price: 1000, group: "vegetales" },
+    { id: "ex-cebolla", name: "Cebolla", price: 500, group: "vegetales" },
+    { id: "ex-cebolla-morada", name: "Cebolla morada", price: 800, group: "vegetales" },
+    { id: "ex-pimenton", name: "Pimentón", price: 800, group: "vegetales" },
+    { id: "ex-cheddar", name: "Salsa cheddar", price: 1000, group: "salsas" },
+    { id: "ex-parmesano", name: "Queso parmesano", price: 500, group: "salsas" },
+    { id: "ex-aji-infierno", name: "Ají infierno", price: 800, group: "salsas" },
+    { id: "ex-ajonesa", name: "Ajonesa", price: 1000, group: "salsas" },
+    { id: "ex-mayo-ahumada", name: "Mayonesa ahumada picante", price: 800, group: "salsas" },
+    { id: "ex-rancho", name: "Rancho de salsa", price: 800, group: "salsas" },
+    {
+      id: "ex-potes",
+      name: "3 potes de aderezo",
+      price: 1000,
+      group: "potes",
+      kind: "pote",
+      flavors: ["Mayo", "Ají", "Ketchup", "Mostaza"],
+      pick: 3,
+    },
+    {
+      id: "ex-potes-premium",
+      name: "3 potes de aderezo premium",
+      price: 2000,
+      group: "potes",
+      kind: "pote",
+      flavors: ["Ajonesa", "Barbacoa", "Ají infierno", "Queso cheddar"],
+      pick: 3,
+    },
+  ];
+
+  const EXTRA_GROUPS = [
+    { id: "proteinas", label: "Proteínas" },
+    { id: "vegetales", label: "Vegetales" },
+    { id: "salsas", label: "Salsas" },
+    { id: "potes", label: "Potes de aderezo" },
+  ];
+
   const FILTER_META = {
-    todos: { title: "Burritos", sub: "14 productos" },
-    solo: { title: "Solo burrito", sub: "7 productos" },
-    papas: { title: "Con papas", sub: "7 productos" },
+    todos: { title: "Burritos", sub: "14 productos · de a dos" },
+    solo: { title: "Solo burrito", sub: "7 productos · de a dos" },
+    papas: { title: "Combo + papas", sub: "7 productos · de a dos" },
+  };
+
+  const PAPAS_FILTER_META = {
+    1: { sub: "6 opciones · 1 persona" },
+    2: { sub: "6 opciones · para 2" },
+    4: { sub: "6 opciones · XL para 4" },
   };
 
   const state = {
     cart: new Map(),
+    extras: new Map(),
+    poteOrders: [],
     filter: "todos",
+    papasFilter: "1",
+    poteDraft: null,
   };
 
   const $ = (sel, root = document) => root.querySelector(sel);
@@ -217,9 +462,11 @@
     `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 
   const menuGrid = $("#menuGrid");
-  const spotlight = $("#spotlight");
+  const papasGrid = $("#papasGrid");
+  const drinksGrid = $("#drinksGrid");
   const menuHeading = $("#menuHeading");
   const menuSubheading = $("#menuSubheading");
+  const papasSubheading = $("#papasSubheading");
   const orderList = $("#orderList");
   const orderEmpty = $("#orderEmpty");
   const orderFooter = $("#orderFooter");
@@ -284,96 +531,193 @@
     return `+${num}`;
   }
 
+  function findProduct(id) {
+    return (
+      MENU.find((m) => m.id === id) ||
+      PAPAS.find((p) => p.id === id) ||
+      DRINKS.find((d) => d.id === id)
+    );
+  }
+
   function heatBars(level) {
     return [1, 2, 3]
       .map((i) => `<span class="${i <= level ? "is-on" : ""}"></span>`)
       .join("");
   }
 
-  function renderSpotlight() {
-    const hits = MENU.filter((m) => m.spotlight);
-    spotlight.innerHTML = hits
-      .map(
-        (item) => `
-      <article class="spot-card">
-        <div class="spot-visual">
-          <img src="${item.image}" alt="${item.name}" loading="lazy" width="640" height="480" />
-          <div class="spot-steam" aria-hidden="true"><i></i><i></i><i></i></div>
-        </div>
-        <div class="spot-body">
-          <span class="spot-badge">${item.spotlightLabel}</span>
-          <h3>${item.name}</h3>
-          <p>${item.desc}</p>
-          <div class="spot-foot">
-            <span class="spot-price">${formatPrice(item.price)}</span>
-            <button type="button" class="spot-add" data-add="${item.id}">Lo quiero</button>
-          </div>
-        </div>
-      </article>`
-      )
-      .join("");
+  function catalogMeta(item) {
+    if (item.kind === "drink") {
+      return {
+        ...item,
+        tag: item.tag || "Bebida",
+        tagStyle: item.tagStyle || "is-fresh",
+        desc: item.desc || "Bien fría para acompañar el combo.",
+      };
+    }
+    if (item.kind === "papas") {
+      const size = item.size || 1;
+      const sizeTag = size === 4 ? "XL" : size === 2 ? "Para 2" : "Individual";
+      const sizeStyle = size === 4 ? "is-hot" : size === 2 ? "" : "is-fresh";
+      return {
+        ...item,
+        size,
+        tag: item.tag || sizeTag,
+        tagStyle: item.tagStyle || sizeStyle,
+        desc:
+          item.desc ||
+          (size === 4
+            ? "Porción XL para compartir (4)."
+            : size === 2
+              ? "Porción para compartir (2)."
+              : "Porción individual."),
+      };
+    }
+    if (item.spotlightLabel) {
+      return { ...item, tag: item.spotlightLabel };
+    }
+    return item;
   }
 
-  function renderMenu() {
-    menuGrid.innerHTML = MENU.map(
-      (item, i) => `
+  function menuCardHTML(item, i, { contain = false } = {}) {
+    const meta = catalogMeta(item);
+    const sizeAttr = meta.size ? ` data-size="${meta.size}"` : "";
+    const categoryAttr = meta.category ? ` data-category="${meta.category}"` : "";
+    return `
       <article
-        class="menu-card${item.featured ? " is-featured" : ""}"
-        data-category="${item.category}"
-        data-id="${item.id}"
-        style="transition-delay: ${i * 30}ms"
+        class="menu-card${meta.featured ? " is-featured" : ""}${contain ? " menu-card--contain" : ""}"
+        data-id="${meta.id}"${categoryAttr}${sizeAttr}
+        style="transition-delay: ${Math.min(i, 12) * 30}ms"
       >
         <div class="menu-plate">
-          <img class="menu-photo" src="${item.image}" alt="${item.name}" loading="lazy" width="480" height="360" />
-          <span class="menu-price-stamp">${formatPrice(item.price)}</span>
+          <img class="menu-photo" src="${meta.image}" alt="${meta.name}" loading="lazy" width="480" height="360" />
+          <span class="menu-price-stamp">${formatPrice(meta.price)}</span>
           ${
-            item.heat > 0
-              ? `<div class="menu-heat" title="Nivel de picante" aria-label="Picante ${item.heat} de 3">${heatBars(item.heat)}</div>`
+            meta.heat > 0
+              ? `<div class="menu-heat" title="Nivel de picante" aria-label="Picante ${meta.heat} de 3">${heatBars(meta.heat)}</div>`
               : ""
           }
         </div>
         <div class="menu-body">
-          <span class="menu-tag ${item.tagStyle}">${item.tag}</span>
-          <h3>${item.name}</h3>
-          <p>${item.desc}</p>
+          <span class="menu-tag ${meta.tagStyle || ""}">${meta.tag}</span>
+          <h3>${meta.name}</h3>
+          <p>${meta.desc}</p>
           <div class="menu-actions">
-            <div class="menu-qty" data-qty-for="${item.id}">
-              <button type="button" class="qty-btn" data-action="dec" data-id="${item.id}" aria-label="Quitar uno">−</button>
-              <span class="qty-val" data-qty="${item.id}">0</span>
-              <button type="button" class="qty-btn" data-action="inc" data-id="${item.id}" aria-label="Agregar uno">+</button>
+            <div class="menu-qty" data-qty-for="${meta.id}">
+              <button type="button" class="qty-btn" data-action="dec" data-id="${meta.id}" aria-label="Quitar uno">−</button>
+              <span class="qty-val" data-qty="${meta.id}">0</span>
+              <button type="button" class="qty-btn" data-action="inc" data-id="${meta.id}" aria-label="Agregar uno">+</button>
             </div>
-            <button type="button" class="btn-add" data-add="${item.id}">Agregar</button>
+            <button type="button" class="btn-add" data-add="${meta.id}">Agregar</button>
           </div>
         </div>
-      </article>`
-    ).join("");
+      </article>`;
+  }
 
+  function revealCards(root) {
     requestAnimationFrame(() => {
-      $$(".menu-card").forEach((card) => card.classList.add("is-visible"));
+      $$(`.menu-card`, root).forEach((card) => card.classList.add("is-visible"));
     });
+  }
 
+  function renderDrinks() {
+    if (!drinksGrid) return;
+    drinksGrid.innerHTML = DRINKS.map((item, i) =>
+      menuCardHTML(item, i, { contain: true })
+    ).join("");
+    revealCards(drinksGrid);
+  }
+
+  function renderPapas() {
+    applyPapasFilter(state.papasFilter);
+  }
+
+  function renderMenu() {
     applyFilter(state.filter);
-    syncQtyUI();
   }
 
   function applyFilter(filter) {
-    state.filter = filter;
-    $$(".filter-btn").forEach((btn) => {
-      const active = btn.dataset.filter === filter;
+    const next = FILTER_META[filter] ? filter : "todos";
+    state.filter = next;
+
+    $$("#menuToolbar .filter-btn").forEach((btn) => {
+      const active = btn.dataset.filter === next;
       btn.classList.toggle("is-active", active);
       btn.setAttribute("aria-selected", active ? "true" : "false");
     });
 
-    const meta = FILTER_META[filter] || FILTER_META.todos;
+    const meta = FILTER_META[next];
     menuHeading.textContent = meta.title;
     menuSubheading.textContent = meta.sub;
 
-    spotlight.hidden = filter !== "todos";
+    const items =
+      next === "todos" ? MENU : MENU.filter((m) => m.category === next);
+    menuGrid.innerHTML = items.map((item, i) => menuCardHTML(item, i)).join("");
+    revealCards(menuGrid);
+    syncQtyUI();
+  }
 
-    $$(".menu-card").forEach((card) => {
-      const show = filter === "todos" || card.dataset.category === filter;
-      card.classList.toggle("is-hidden", !show);
+  function applyPapasFilter(size) {
+    const key = PAPAS_FILTER_META[String(size)] ? String(size) : "1";
+    state.papasFilter = key;
+
+    $$("#papasToolbar .filter-btn").forEach((btn) => {
+      const active = btn.dataset.papasSize === key;
+      btn.classList.toggle("is-active", active);
+      btn.setAttribute("aria-selected", active ? "true" : "false");
     });
+
+    const meta = PAPAS_FILTER_META[key];
+    if (papasSubheading) papasSubheading.textContent = meta.sub;
+
+    const items = PAPAS.filter((p) => String(p.size) === key);
+    papasGrid.innerHTML = items.map((item, i) => menuCardHTML(item, i)).join("");
+    revealCards(papasGrid);
+    syncQtyUI();
+  }
+
+  function scrollToShop(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function setShopRailActive(id) {
+    $$("#shopRail .shop-rail-btn").forEach((btn) => {
+      btn.classList.toggle("is-active", btn.dataset.shop === id);
+    });
+  }
+
+  function initShopRail() {
+    const rail = $("#shopRail");
+    if (!rail) return;
+
+    rail.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-shop]");
+      if (!btn) return;
+      const id = btn.dataset.shop;
+      setShopRailActive(id);
+      scrollToShop(id);
+    });
+
+    const sections = ["burritos", "papas", "bebidas"]
+      .map((id) => document.getElementById(id))
+      .filter(Boolean);
+
+    if (!("IntersectionObserver" in window) || !sections.length) return;
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]) setShopRailActive(visible[0].target.id);
+      },
+      {
+        rootMargin: "-30% 0px -45% 0px",
+        threshold: [0.15, 0.35, 0.6],
+      }
+    );
+    sections.forEach((section) => io.observe(section));
   }
 
   function getQty(id) {
@@ -383,6 +727,11 @@
   function setQty(id, qty) {
     if (qty <= 0) state.cart.delete(id);
     else state.cart.set(id, qty);
+    const hasBurrito = MENU.some((m) => state.cart.has(m.id));
+    if (!hasBurrito) {
+      state.extras.clear();
+      state.poteOrders = [];
+    }
     syncQtyUI();
     renderOrder();
     updateTray();
@@ -390,7 +739,7 @@
 
   function addOne(id) {
     setQty(id, getQty(id) + 1);
-    const item = MENU.find((m) => m.id === id);
+    const item = findProduct(id);
     showToast(`${item.name} al pedido`, { action: true });
     popCartFloat();
     $$(`[data-add="${id}"]`).forEach((btn) => {
@@ -409,12 +758,12 @@
   }
 
   function syncQtyUI() {
-    MENU.forEach((item) => {
+    [...MENU, ...PAPAS, ...DRINKS].forEach((item) => {
       const qty = getQty(item.id);
       $$(`[data-qty="${item.id}"]`).forEach((el) => {
         el.textContent = String(qty);
       });
-      $$(`[data-id="${item.id}"].menu-card, .menu-card[data-id="${item.id}"]`).forEach((card) => {
+      $$(`.menu-card[data-id="${item.id}"]`).forEach((card) => {
         card.classList.toggle("is-in-cart", qty > 0);
       });
       $$(`[data-add="${item.id}"]`).forEach((btn) => {
@@ -431,18 +780,133 @@
   function cartEntries() {
     return [...state.cart.entries()]
       .map(([id, qty]) => {
-        const item = MENU.find((m) => m.id === id);
+        const item = findProduct(id);
         return item ? { ...item, qty, subtotal: item.price * qty } : null;
       })
       .filter(Boolean);
   }
 
+  function burritoEntries() {
+    return cartEntries().filter((e) => e.kind !== "drink" && e.kind !== "papas");
+  }
+
+  function drinkEntries() {
+    return cartEntries().filter((e) => e.kind === "drink");
+  }
+
+  function papasEntries() {
+    return cartEntries().filter((e) => e.kind === "papas");
+  }
+
+  function extraEntries() {
+    return [...state.extras.entries()]
+      .map(([id, qty]) => {
+        const item = EXTRAS.find((e) => e.id === id);
+        return item ? { ...item, qty, subtotal: item.price * qty } : null;
+      })
+      .filter(Boolean);
+  }
+
+  function extrasTotal() {
+    const simple = extraEntries().reduce((s, e) => s + e.subtotal, 0);
+    const potes = state.poteOrders.reduce((s, p) => s + p.price, 0);
+    return simple + potes;
+  }
+
   function cartTotal() {
-    return cartEntries().reduce((s, e) => s + e.subtotal, 0);
+    return cartEntries().reduce((s, e) => s + e.subtotal, 0) + extrasTotal();
   }
 
   function cartCount() {
-    return cartEntries().reduce((s, e) => s + e.qty, 0);
+    const burritos = cartEntries().reduce((s, e) => s + e.qty, 0);
+    const extras = extraEntries().reduce((s, e) => s + e.qty, 0);
+    return burritos + extras + state.poteOrders.length;
+  }
+
+  function getExtraQty(id) {
+    return state.extras.get(id) || 0;
+  }
+
+  function setExtraQty(id, qty) {
+    if (qty <= 0) state.extras.delete(id);
+    else state.extras.set(id, qty);
+    renderOrder();
+    updateTray();
+  }
+
+  function renderExtrasPanel() {
+    const extrasGroups = $("#extrasGroups");
+    const extrasPanel = $("#extrasPanel");
+    if (!extrasGroups || !extrasPanel) return;
+
+    const hasBurritos = burritoEntries().length > 0;
+    extrasPanel.hidden = !hasBurritos;
+    if (!hasBurritos) return;
+
+    extrasGroups.innerHTML = EXTRA_GROUPS.map((group) => {
+      const items = EXTRAS.filter((e) => e.group === group.id);
+      return `
+        <div class="extras-group">
+          <p class="extras-group-label">${group.label}</p>
+          <ul class="extras-list">
+            ${items
+              .map((item) => {
+                if (item.kind === "pote") {
+                  return `
+                  <li class="extras-row">
+                    <div class="extras-info">
+                      <span class="extras-name">${item.name}</span>
+                      <span class="extras-price">${formatPrice(item.price)}</span>
+                    </div>
+                    <button type="button" class="extras-add" data-pote="${item.id}" aria-label="Elegir sabores de ${item.name}">+</button>
+                  </li>`;
+                }
+                const qty = getExtraQty(item.id);
+                return `
+                <li class="extras-row">
+                  <div class="extras-info">
+                    <span class="extras-name">${item.name}</span>
+                    <span class="extras-price">${formatPrice(item.price)}</span>
+                  </div>
+                  ${
+                    qty > 0
+                      ? `<div class="extras-qty">
+                          <button type="button" class="extras-qty-btn" data-extra-action="dec" data-extra-id="${item.id}" aria-label="Quitar">−</button>
+                          <span>${qty}</span>
+                          <button type="button" class="extras-qty-btn" data-extra-action="inc" data-extra-id="${item.id}" aria-label="Agregar">+</button>
+                        </div>`
+                      : `<button type="button" class="extras-add" data-extra-action="inc" data-extra-id="${item.id}" aria-label="Agregar ${item.name}">+</button>`
+                  }
+                </li>`;
+              })
+              .join("")}
+          </ul>
+        </div>`;
+    }).join("");
+
+    if (state.poteOrders.length) {
+      extrasGroups.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="extras-group">
+          <p class="extras-group-label">Tus potes</p>
+          <ul class="extras-list">
+            ${state.poteOrders
+              .map(
+                (p, i) => `
+              <li class="extras-row extras-row--pote">
+                <div class="extras-info">
+                  <span class="extras-name">${p.name}</span>
+                  <span class="extras-meta">${p.flavors.join(", ")}</span>
+                  <span class="extras-price">${formatPrice(p.price)}</span>
+                </div>
+                <button type="button" class="extras-remove" data-pote-remove="${i}" aria-label="Quitar pote">Quitar</button>
+              </li>`
+              )
+              .join("")}
+          </ul>
+        </div>`
+      );
+    }
   }
 
   function renderOrder() {
@@ -468,7 +932,72 @@
       )
       .join("");
 
+    renderExtrasPanel();
     orderTotal.textContent = formatPrice(cartTotal());
+  }
+
+  function openPoteModal(extraId) {
+    const item = EXTRAS.find((e) => e.id === extraId);
+    if (!item || item.kind !== "pote") return;
+    state.poteDraft = { id: item.id, selected: [] };
+    $("#poteTitle").textContent = `Elige ${item.pick} aderezos`;
+    $("#poteSub").textContent = item.name;
+    $("#poteOptions").innerHTML = item.flavors
+      .map(
+        (f) => `
+      <label class="pote-option">
+        <input type="checkbox" value="${f}" />
+        <span>${f}</span>
+      </label>`
+      )
+      .join("");
+    $("#potePicked").textContent = "0";
+    $("#poteConfirm").disabled = true;
+    const modal = $("#poteModal");
+    modal.hidden = false;
+    requestAnimationFrame(() => modal.classList.add("is-open"));
+  }
+
+  function closePoteModal() {
+    const modal = $("#poteModal");
+    modal.classList.remove("is-open");
+    state.poteDraft = null;
+    setTimeout(() => {
+      modal.hidden = true;
+    }, 250);
+  }
+
+  function syncPoteDraft() {
+    if (!state.poteDraft) return;
+    const item = EXTRAS.find((e) => e.id === state.poteDraft.id);
+    const checked = $$("#poteOptions input:checked").map((i) => i.value);
+    const pick = item.pick;
+
+    $$("#poteOptions input").forEach((input) => {
+      if (!input.checked && checked.length >= pick) input.disabled = true;
+      else input.disabled = false;
+    });
+
+    state.poteDraft.selected = checked;
+    $("#potePicked").textContent = String(checked.length);
+    $("#poteConfirm").disabled = checked.length !== pick;
+  }
+
+  function confirmPote() {
+    if (!state.poteDraft) return;
+    const item = EXTRAS.find((e) => e.id === state.poteDraft.id);
+    if (state.poteDraft.selected.length !== item.pick) return;
+    state.poteOrders.push({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      flavors: [...state.poteDraft.selected],
+    });
+    closePoteModal();
+    renderOrder();
+    updateTray();
+    popCartFloat();
+    showToast(`${item.name} agregado`, { action: true });
   }
 
   function openCart() {
@@ -484,6 +1013,7 @@
   }
 
   function closeCart() {
+    if (!$("#poteModal").hidden) closePoteModal();
     cartBackdrop.classList.remove("is-open");
     cartDrawer.classList.remove("is-open");
     cartDrawer.setAttribute("aria-hidden", "true");
@@ -530,24 +1060,53 @@
   }
 
   function buildWhatsAppMessage() {
-    const entries = cartEntries();
-    if (!entries.length) return WHATSAPP_GREETING;
+    const burritos = burritoEntries();
+    const papas = papasEntries();
+    const drinks = drinkEntries();
+    const extras = extraEntries();
+    if (!burritos.length && !papas.length && !drinks.length) return WHATSAPP_GREETING;
 
-    return [
-      "¡Hola El Suricano! Quiero este pedido:",
-      "",
-      ...entries.map(
-        (e) => `• ${e.qty}x ${e.name} — ${formatPrice(e.subtotal)}`
-      ),
+    const lines = ["¡Hola El Suricano! Quiero este pedido:", ""];
+    let needGap = false;
+
+    const pushSection = (title, entries) => {
+      if (!entries.length) return;
+      if (needGap) lines.push("");
+      lines.push(
+        `*${title}*`,
+        ...entries.map((e) => `• ${e.qty}x ${e.name} — ${formatPrice(e.subtotal)}`)
+      );
+      needGap = true;
+    };
+
+    pushSection("Burritos", burritos);
+    pushSection("Papas", papas);
+    pushSection("Bebidas", drinks);
+
+    if (extras.length || state.poteOrders.length) {
+      if (needGap) lines.push("");
+      lines.push("*Extras*");
+      extras.forEach((e) => {
+        lines.push(`• ${e.qty}x ${e.name} — ${formatPrice(e.subtotal)}`);
+      });
+      state.poteOrders.forEach((p) => {
+        lines.push(
+          `• 1x ${p.name} (${p.flavors.join(", ")}) — ${formatPrice(p.price)}`
+        );
+      });
+    }
+
+    lines.push(
       "",
       `*Total estimado: ${formatPrice(cartTotal())}*`,
       "",
-      "¿Me confirman tiempo de preparación? 🙏",
-    ].join("\n");
+      "¿Me confirman tiempo de preparación? 🙏"
+    );
+    return lines.join("\n");
   }
 
   function sendOrder() {
-    if (!cartCount()) {
+    if (!cartEntries().length) {
       showToast("Agrega algo de la carta primero");
       return;
     }
@@ -576,8 +1135,12 @@
   }
 
   function bindEvents() {
-    $$(".filter-btn").forEach((btn) => {
+    $$("#menuToolbar .filter-btn").forEach((btn) => {
       btn.addEventListener("click", () => applyFilter(btn.dataset.filter));
+    });
+
+    $$("#papasToolbar .filter-btn").forEach((btn) => {
+      btn.addEventListener("click", () => applyPapasFilter(btn.dataset.papasSize));
     });
 
     const onAddClick = (e) => {
@@ -590,12 +1153,49 @@
     };
 
     menuGrid.addEventListener("click", onAddClick);
-    spotlight.addEventListener("click", onAddClick);
+    papasGrid.addEventListener("click", onAddClick);
+    drinksGrid.addEventListener("click", onAddClick);
     orderList.addEventListener("click", handleQtyClick);
+
+    $("#extrasGroups").addEventListener("click", (e) => {
+      const poteBtn = e.target.closest("[data-pote]");
+      if (poteBtn) {
+        openPoteModal(poteBtn.dataset.pote);
+        return;
+      }
+      const removePote = e.target.closest("[data-pote-remove]");
+      if (removePote) {
+        state.poteOrders.splice(Number(removePote.dataset.poteRemove), 1);
+        renderOrder();
+        updateTray();
+        return;
+      }
+      const extraBtn = e.target.closest("[data-extra-action]");
+      if (!extraBtn) return;
+      const id = extraBtn.dataset.extraId;
+      const action = extraBtn.dataset.extraAction;
+      const current = getExtraQty(id);
+      if (action === "inc") {
+        setExtraQty(id, current + 1);
+        popCartFloat();
+      } else if (action === "dec") {
+        setExtraQty(id, current - 1);
+      }
+    });
+
+    $("#poteOptions").addEventListener("change", syncPoteDraft);
+    $("#poteConfirm").addEventListener("click", confirmPote);
+    $("#poteCancel").addEventListener("click", closePoteModal);
+    $("#poteClose").addEventListener("click", closePoteModal);
+    $("#poteModal").addEventListener("click", (e) => {
+      if (e.target.id === "poteModal") closePoteModal();
+    });
 
     $("#sendWhatsApp").addEventListener("click", sendOrder);
     $("#clearOrder").addEventListener("click", () => {
       state.cart.clear();
+      state.extras.clear();
+      state.poteOrders = [];
       syncQtyUI();
       renderOrder();
       updateTray();
@@ -621,6 +1221,10 @@
 
     document.addEventListener("keydown", (e) => {
       if (e.key !== "Escape") return;
+      if (!$("#poteModal").hidden) {
+        closePoteModal();
+        return;
+      }
       if (cartDrawer.classList.contains("is-open")) {
         closeCart();
         return;
@@ -690,9 +1294,12 @@
 
   $("#year").textContent = String(new Date().getFullYear());
   initWhatsAppLinks();
-  renderSpotlight();
   renderMenu();
+  renderPapas();
+  renderDrinks();
+  syncQtyUI();
   renderOrder();
   bindEvents();
+  initShopRail();
   initReveal();
 })();

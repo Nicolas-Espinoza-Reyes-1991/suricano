@@ -4,6 +4,11 @@
   Cache-Control: public, max-age=60
   Access-Control-Allow-Origin: *
 
+/og-v2.jpg
+  Content-Type: image/jpeg
+  Cache-Control: public, max-age=60
+  Access-Control-Allow-Origin: *
+
 /assets/*
   Cache-Control: public, max-age=86400
   Access-Control-Allow-Origin: *

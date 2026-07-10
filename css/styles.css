@@ -206,23 +206,19 @@ ul {
 .header-brand img {
   width: 56px;
   height: 56px;
-  border-radius: 50%;
-  object-fit: cover;
+  border-radius: 0;
+  object-fit: contain;
   object-position: center;
-  border: 2px solid var(--gold);
-  box-shadow:
-    0 0 0 3px rgba(0, 104, 71, 0.45),
-    0 0 0 5px rgba(206, 17, 38, 0.35),
-    0 6px 16px rgba(0, 0, 0, 0.35);
-  transition: transform 0.4s var(--ease-spring), box-shadow 0.35s;
+  border: none;
+  box-shadow: none;
+  clip-path: circle(49.5% at 50% 50%);
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.35));
+  transition: transform 0.4s var(--ease-spring), filter 0.35s;
 }
 
 .header-brand:hover img {
   transform: rotate(-8deg) scale(1.06);
-  box-shadow:
-    0 0 0 3px rgba(0, 104, 71, 0.65),
-    0 0 0 5px rgba(206, 17, 38, 0.5),
-    0 8px 20px rgba(240, 180, 41, 0.35);
+  filter: drop-shadow(0 6px 14px rgba(240, 180, 41, 0.35));
 }
 
 .site-nav {
@@ -491,65 +487,97 @@ ul {
   pointer-events: none;
 }
 
+.hero-carousel {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #1a0f16;
+}
+
 .hero-photo {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 40%;
-  transform: scale(1.08);
-  filter: saturate(1.2) contrast(1.05) brightness(1.05) blur(6px);
-  animation: heroZoom 20s ease-in-out infinite alternate;
+  object-position: center center;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  opacity: 0;
+  transform: none;
+  filter: none;
+  z-index: 0;
+  pointer-events: none;
+  backface-visibility: hidden;
+  transition: opacity 1.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@keyframes heroZoom {
-  from { transform: scale(1.08) translateY(0); }
-  to { transform: scale(1.14) translateY(-2%); }
+.hero-photo.is-active {
+  opacity: 1;
+  z-index: 1;
+}
+
+.hero-photo.is-entering {
+  z-index: 1;
+  animation: heroDissolveIn 1.15s cubic-bezier(0.33, 0, 0.2, 1) both;
+}
+
+.hero-photo.is-leaving {
+  z-index: 2;
+  opacity: 0;
+  filter: blur(8px) brightness(1.05);
+  transition: opacity 1.15s cubic-bezier(0.4, 0, 0.2, 1), filter 1.15s ease;
+  animation: heroDisintegrate 1.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes heroDissolveIn {
+  0% { opacity: 0; filter: blur(5px); }
+  100% { opacity: 1; filter: none; }
+}
+
+@keyframes heroDisintegrate {
+  0% { opacity: 1; filter: blur(0); }
+  100% { opacity: 0; filter: blur(10px) brightness(1.08); }
 }
 
 .hero-scrim {
   position: absolute;
   inset: 0;
-  z-index: 0;
+  z-index: 2;
   background:
-    radial-gradient(ellipse 55% 60% at 50% 42%, transparent 0%, rgba(26, 15, 22, 0.25) 55%, rgba(26, 15, 22, 0.78) 100%),
-    linear-gradient(180deg, rgba(26, 15, 22, 0.35) 0%, transparent 28%, transparent 55%, rgba(26, 15, 22, 0.85) 100%);
+    radial-gradient(ellipse 80% 70% at 50% 40%, rgba(26, 15, 22, 0.58) 0%, rgba(26, 15, 22, 0.74) 68%, rgba(26, 15, 22, 0.9) 100%),
+    linear-gradient(180deg, rgba(26, 15, 22, 0.62) 0%, rgba(26, 15, 22, 0.4) 40%, rgba(26, 15, 22, 0.5) 60%, rgba(26, 15, 22, 0.94) 100%);
+  pointer-events: none;
 }
 
 .hero-flag {
   position: absolute;
   inset: 0;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  z-index: 3;
   pointer-events: none;
+  opacity: 0.35;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 104, 71, 0.22) 0%,
+      transparent 28%,
+      transparent 72%,
+      rgba(206, 17, 38, 0.2) 100%
+    );
 }
 
 .hero-flag span {
-  display: block;
-  height: 100%;
-}
-
-.hero-flag span:nth-child(1) {
-  background: rgba(0, 104, 71, 0.32);
-}
-
-.hero-flag span:nth-child(2) {
-  background: rgba(255, 255, 255, 0.14);
-}
-
-.hero-flag span:nth-child(3) {
-  background: rgba(206, 17, 38, 0.28);
+  display: none;
 }
 
 .hero-glow {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 4;
   background:
-    radial-gradient(circle at 50% 35%, rgba(0, 0, 0, 0.15), transparent 55%),
-    radial-gradient(circle at 50% 30%, rgba(240, 180, 41, 0.08), transparent 40%);
+    radial-gradient(circle at 50% 28%, rgba(240, 180, 41, 0.12), transparent 42%),
+    radial-gradient(circle at 50% 45%, rgba(0, 0, 0, 0.12), transparent 55%);
   animation: glowPulse 8s ease-in-out infinite alternate;
 }
 
@@ -561,7 +589,7 @@ ul {
 .guirnaldas {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 5;
   pointer-events: none;
   overflow: hidden;
   display: flex;
@@ -607,57 +635,50 @@ ul {
 
 .hero-content {
   position: relative;
-  z-index: 5;
+  z-index: 6;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: min(720px, 100%);
+  width: min(760px, 100%);
   margin-inline: auto;
   max-height: 100%;
+  gap: 0;
+  padding-inline: 0.5rem;
 }
 
 .hero-logo-wrap {
   display: grid;
   place-items: center;
-  width: min(300px, 52vw, 34vh);
+  width: min(340px, 56vw, 38vh);
   aspect-ratio: 1;
-  margin-bottom: clamp(0.35rem, 1.4vh, 1rem);
+  margin: 0 auto clamp(0.85rem, 2.2vh, 1.5rem);
   animation: logoIn 1.1s var(--ease-out) both;
   position: relative;
   z-index: 6;
-  flex-shrink: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(0 18px 36px rgba(0, 0, 0, 0.55));
 }
 
 .hero-logo {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center;
-  border-radius: 50%;
+  object-fit: contain;
+  object-position: center center;
   display: block;
-  border: 3px solid rgba(240, 180, 41, 0.55);
-  box-shadow:
-    0 0 0 6px rgba(26, 15, 22, 0.35),
-    0 18px 40px rgba(0, 0, 0, 0.45);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  clip-path: circle(49.2% at 50% 50%);
   animation: logoFloat 6s ease-in-out 1.1s infinite;
 }
 
 .hero-chip {
-  display: inline-flex;
-  padding: 0.3rem 0.85rem;
-  margin-bottom: clamp(0.25rem, 1vh, 0.7rem);
-  border-radius: 999px;
-  font-size: clamp(0.68rem, 1.5vh, 0.8rem);
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  background: rgba(26, 15, 22, 0.45);
-  border: 1px solid rgba(240, 180, 41, 0.5);
-  color: var(--gold-soft);
-  animation: fadeUp 0.9s var(--ease-out) 0.15s both;
-  backdrop-filter: blur(8px);
+  display: none;
 }
 
 @keyframes logoIn {
@@ -678,22 +699,22 @@ ul {
 
 .hero-title {
   font-family: var(--font-display);
-  font-size: clamp(1.7rem, 2.2vh + 2.2vw, 4.2rem);
-  line-height: 0.95;
+  font-size: clamp(2rem, 2.6vh + 2.6vw, 4.85rem);
+  line-height: 0.94;
   letter-spacing: 0.03em;
   text-transform: uppercase;
-  margin-bottom: clamp(0.3rem, 1vh, 0.75rem);
+  margin-bottom: clamp(0.4rem, 1.2vh, 0.85rem);
   animation: fadeUp 0.9s var(--ease-out) 0.25s both;
   text-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
   max-width: 18ch;
 }
 
 .hero-lead {
-  font-size: clamp(0.95rem, 1.5vh + 0.4vw, 1.35rem);
+  font-size: clamp(1.08rem, 1.7vh + 0.5vw, 1.5rem);
   font-weight: 500;
   color: rgba(247, 239, 230, 0.95);
-  max-width: 28rem;
-  margin-bottom: clamp(0.65rem, 2vh, 1.5rem);
+  max-width: 30rem;
+  margin-bottom: clamp(0.85rem, 2.2vh, 1.65rem);
   line-height: 1.35;
   animation: fadeUp 0.9s var(--ease-out) 0.4s both;
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
@@ -709,9 +730,9 @@ ul {
 }
 
 .btn-hero {
-  min-width: min(200px, 42vw);
-  padding: clamp(0.7rem, 1.6vh, 1.05rem) clamp(1.1rem, 2.5vw, 1.85rem);
-  font-size: clamp(0.82rem, 1.5vh + 0.2vw, 1rem);
+  min-width: min(230px, 46vw);
+  padding: clamp(0.88rem, 1.9vh, 1.2rem) clamp(1.35rem, 3vw, 2.15rem);
+  font-size: clamp(0.95rem, 1.7vh + 0.25vw, 1.12rem);
   font-weight: 800;
   letter-spacing: 0.03em;
   text-transform: uppercase;
@@ -1979,10 +2000,12 @@ ul {
 
 .contact-logo {
   width: min(240px, 65%);
-  border-radius: 50%;
+  border-radius: 0;
+  object-fit: contain;
   animation: logoFloat 7s ease-in-out infinite;
   filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.35));
-  border: 3px solid rgba(240, 180, 41, 0.4);
+  border: none;
+  clip-path: circle(49.5% at 50% 50%);
 }
 
 /* Footer */
@@ -2007,13 +2030,42 @@ ul {
 .footer-inner img {
   width: 48px;
   height: 48px;
-  border-radius: 50%;
-  border: 2px solid rgba(240, 180, 41, 0.4);
+  border-radius: 0;
+  object-fit: contain;
+  border: none;
+  clip-path: circle(49.5% at 50% 50%);
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.35));
 }
 
 .footer-inner p {
   font-size: 0.88rem;
   color: rgba(247, 239, 230, 0.55);
+  margin: 0;
+}
+
+.footer-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.footer-credit {
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  color: rgba(247, 239, 230, 0.38);
+}
+
+.footer-credit a {
+  color: rgba(247, 239, 230, 0.5);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(247, 239, 230, 0.18);
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+.footer-credit a:hover {
+  color: rgba(240, 180, 41, 0.85);
+  border-bottom-color: rgba(240, 180, 41, 0.45);
 }
 
 /* Cart float */
@@ -2330,9 +2382,13 @@ body.has-cart .wa-float-pulse {
   }
 
   .hero-photo {
-    filter: saturate(1.15) contrast(1.05) brightness(1.05) blur(4px);
-    animation: none;
-    transform: scale(1.06);
+    filter: none;
+    padding: 0;
+  }
+
+  .hero-photo.is-active {
+    opacity: 1;
+    transform: none;
   }
 
   .nav-toggle {
@@ -2441,43 +2497,42 @@ body.has-cart .wa-float-pulse {
   }
 
   .hero-logo-wrap {
-    width: min(180px, 42vw, 26vh);
-    margin-bottom: 0.65rem;
+    width: min(240px, 58vw, 34vh);
+    margin-bottom: 0.75rem;
   }
 
   .hero-logo {
-    border-width: 2px;
-    box-shadow:
-      0 0 0 5px rgba(26, 15, 22, 0.35),
-      0 14px 32px rgba(0, 0, 0, 0.4);
+    border: none;
+    box-shadow: none;
+    filter: none;
   }
 
   .hero-title {
-    font-size: clamp(1.65rem, 6.5vw, 2.35rem);
+    font-size: clamp(1.85rem, 7.2vw, 2.65rem);
     max-width: 16ch;
-    margin-bottom: 0.55rem;
+    margin-bottom: 0.6rem;
   }
 
   .hero-lead {
-    font-size: 1rem;
-    margin-bottom: 1.15rem;
+    font-size: 1.1rem;
+    margin-bottom: 1.25rem;
     max-width: 22rem;
   }
 
   .hero-cta {
     flex-direction: column;
     width: 100%;
-    max-width: 340px;
-    gap: 0.65rem;
+    max-width: 380px;
+    gap: 0.7rem;
   }
 
   .hero-cta .btn,
   .btn-hero {
     width: 100%;
     min-width: 0;
-    min-height: 52px;
-    padding: 0.95rem 1.25rem;
-    font-size: 0.95rem;
+    min-height: 54px;
+    font-size: 1.02rem;
+    padding: 0.95rem 1.35rem;
   }
 
   .hero-chip {
@@ -2490,7 +2545,14 @@ body.has-cart .wa-float-pulse {
   }
 
   .guirnaldas {
-    display: none;
+    display: flex;
+    padding-top: calc(var(--header-h) + env(safe-area-inset-top, 0px));
+  }
+
+  .guirnalda--sides {
+    width: 100%;
+    max-height: min(12vh, 96px);
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
   }
 
   /* Spotlight: carrusel horizontal */
@@ -2720,15 +2782,15 @@ body.has-cart .wa-float-pulse {
 
 @media (max-width: 480px) {
   .hero-logo-wrap {
-    width: min(150px, 38vw, 22vh);
+    width: min(210px, 54vw, 30vh);
   }
 
   .hero-title {
-    font-size: clamp(1.45rem, 6.2vw, 1.95rem);
+    font-size: clamp(1.65rem, 6.8vw, 2.2rem);
   }
 
   .hero-lead {
-    font-size: 0.95rem;
+    font-size: 1.02rem;
   }
 
   .menu-grid {
@@ -2794,7 +2856,7 @@ body.has-cart .wa-float-pulse {
 
 @media (max-height: 700px) and (max-width: 900px) {
   .hero-logo-wrap {
-    width: min(130px, 22vh);
+    width: min(160px, 26vh);
   }
 
   .hero-chip {
@@ -2802,12 +2864,12 @@ body.has-cart .wa-float-pulse {
   }
 
   .hero-title {
-    font-size: clamp(1.35rem, 5vh, 1.85rem);
+    font-size: clamp(1.5rem, 5.4vh, 2rem);
   }
 
   .hero-lead {
-    font-size: 0.9rem;
-    margin-bottom: 0.75rem;
+    font-size: 1rem;
+    margin-bottom: 0.85rem;
   }
 }
 
@@ -2826,9 +2888,24 @@ body.has-cart .wa-float-pulse {
   }
 
   .hero-photo {
-    transform: none;
-    animation: none;
-    filter: saturate(1.2) contrast(1.05) brightness(1.05) blur(6px);
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+    filter: none !important;
+  }
+
+  .hero-photo.is-active {
+    opacity: 1 !important;
+    z-index: 1;
+  }
+
+  .hero-photo:not(.is-active) {
+    opacity: 0 !important;
+  }
+
+  .hero-photo.is-leaving,
+  .hero-photo.is-entering {
+    animation: none !important;
   }
 
   .guirnalda-side--left,

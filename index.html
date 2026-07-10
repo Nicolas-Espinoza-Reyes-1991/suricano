@@ -34,13 +34,13 @@
   <meta name="twitter:image" content="https://suricano.pages.dev/og.jpg" />
 
   <link rel="canonical" href="https://suricano.pages.dev/" />
-  <link rel="icon" href="assets/logo-circle.png" type="image/png" />
-  <link rel="apple-touch-icon" href="assets/logo-circle.png" />
+  <link rel="icon" href="assets/logo-circle.png?v=12" type="image/png" />
+  <link rel="apple-touch-icon" href="assets/logo-circle.png?v=12" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lilita+One&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/styles.css?v=25" />
 
   <script type="application/ld+json">
   {
@@ -87,7 +87,7 @@
 
   <header class="site-header" id="header">
     <a class="header-brand" href="#inicio" aria-label="El Suricano — inicio">
-      <img src="assets/logo-circle.png" alt="El Suricano" width="48" height="48" />
+      <img src="assets/logo-circle.png?v=12" alt="El Suricano" width="56" height="56" />
       <span class="header-brand-text">
         El Suricano
         <small>Fast & Mexican</small>
@@ -112,7 +112,33 @@
   <main>
     <section class="hero" id="inicio">
       <div class="hero-bg" aria-hidden="true">
-        <img class="hero-photo" src="assets/hero-bg.jpg" alt="" />
+        <div class="hero-carousel">
+          <img
+            class="hero-photo is-active"
+            src="assets/hero/hero-1.jpg?v=20"
+            alt=""
+            width="1920"
+            height="1080"
+            fetchpriority="high"
+            decoding="async"
+          />
+          <img
+            class="hero-photo"
+            src="assets/hero/hero-2.jpg?v=20"
+            alt=""
+            width="1920"
+            height="1080"
+            decoding="async"
+          />
+          <img
+            class="hero-photo"
+            src="assets/hero/hero-3.jpg?v=23"
+            alt=""
+            width="1920"
+            height="1080"
+            decoding="async"
+          />
+        </div>
         <div class="hero-scrim"></div>
         <div class="hero-flag">
           <span></span>
@@ -193,13 +219,13 @@
         <div class="hero-logo-wrap">
           <img
             class="hero-logo"
-            src="assets/logo-circle.png"
+            src="assets/logo-circle.png?v=12"
             alt="El Suricano — Fast & Mexican, Comida Rápida"
-            width="420"
-            height="420"
+            width="1094"
+            height="1094"
+            decoding="async"
           />
         </div>
-        <p class="hero-chip">Fast & Mexican</p>
         <h1 class="hero-title">Sabor chingón<br />a la vuelta de la esquina</h1>
         <p class="hero-lead">Mitad del sur, mitad mexicano. 100% sabroso.</p>
         <div class="hero-cta">
@@ -240,8 +266,8 @@
     <section class="menu-section" id="carta">
       <div class="section-inner">
         <p class="eyebrow reveal">La carta</p>
-        <h2 class="section-title reveal">Burritos que pegan</h2>
-        <p class="section-lead reveal">Todos vienen de a dos. Filtra si quieres, suma al carrito y envía por WhatsApp.</p>
+        <h2 class="section-title reveal">Sabor chingón, a tu gusto</h2>
+        <p class="section-lead reveal">Burritos de a dos, papas cargadas y bebidas. Arma tu pedido y mándalo por WhatsApp.</p>
 
         <div class="catalog-block catalog-block--first" id="burritos">
           <div class="menu-toolbar" id="menuToolbar">
@@ -320,7 +346,7 @@
           </ul>
         </div>
         <div class="contact-visual reveal">
-          <img class="contact-logo" src="assets/logo-circle.png" alt="El Suricano" width="240" height="240" />
+          <img class="contact-logo" src="assets/logo-circle.png?v=12" alt="El Suricano" width="240" height="240" />
         </div>
       </div>
     </section>
@@ -329,8 +355,14 @@
   <footer class="site-footer">
     <div class="accent-line" aria-hidden="true"></div>
     <div class="section-inner footer-inner">
-      <img src="assets/logo-circle.png" alt="El Suricano" width="56" height="56" />
-      <p>© <span id="year"></span> El Suricano · Fast & Mexican</p>
+      <img src="assets/logo-circle.png?v=12" alt="El Suricano" width="56" height="56" />
+      <div class="footer-copy">
+        <p>© <span id="year"></span> El Suricano · Fast & Mexican</p>
+        <p class="footer-credit">
+          Desarrollado por
+          <a href="https://adkiniq.cl/" target="_blank" rel="noopener noreferrer">Adkiniq</a>
+        </p>
+      </div>
     </div>
   </footer>
 
@@ -355,7 +387,7 @@
       <ul class="order-list" id="orderList"></ul>
       <div class="order-empty" id="orderEmpty">
         <p>Tu bandeja está vacía.</p>
-        <p class="order-empty-hint">Elige un burrito de la carta y vuelve aquí para enviarlo.</p>
+        <p class="order-empty-hint">Elige de la carta y vuelve aquí para enviarlo.</p>
         <a class="btn btn-primary btn-sm" href="#carta" data-close-cart>Ver la carta</a>
       </div>
       <div class="extras-panel" id="extrasPanel" hidden>
@@ -428,6 +460,6 @@
     </div>
   </div>
 
-  <script src="js/main.js"></script>
+  <script src="js/main.js?v=21"></script>
 </body>
 </html>

@@ -1273,6 +1273,65 @@
     $$(".reveal").forEach((el) => io.observe(el));
   }
 
+  function initHeroCarousel() {
+    const root = document.querySelector(".hero-carousel");
+    if (!root) return;
+
+    const slides = [...root.querySelectorAll(".hero-photo")];
+    if (slides.length < 2) return;
+
+    slides.forEach((img) => {
+      img.loading = "eager";
+      img.decoding = "async";
+    });
+
+    let index = Math.max(
+      0,
+      slides.findIndex((s) => s.classList.contains("is-active"))
+    );
+    let busy = false;
+    const FADE_MS = 1200;
+    const INTERVAL_MS = 4000;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    slides.forEach((s, i) => {
+      s.classList.toggle("is-active", i === index);
+      s.classList.remove("is-leaving", "is-entering");
+    });
+
+    const goNext = () => {
+      if (busy) return;
+      const from = slides[index];
+      const next = (index + 1) % slides.length;
+      const to = slides[next];
+
+      if (reduceMotion) {
+        from.classList.remove("is-active");
+        to.classList.add("is-active");
+        index = next;
+        return;
+      }
+
+      busy = true;
+      from.classList.remove("is-entering");
+      from.classList.add("is-leaving");
+      from.classList.remove("is-active");
+
+      to.classList.add("is-active", "is-entering");
+
+      window.setTimeout(() => {
+        from.classList.remove("is-leaving");
+        to.classList.remove("is-entering");
+        index = next;
+        busy = false;
+      }, FADE_MS);
+    };
+
+    window.setInterval(goNext, INTERVAL_MS);
+  }
+
+  initHeroCarousel();
+
   $("#year").textContent = String(new Date().getFullYear());
   initWhatsAppLinks();
   renderMenu();

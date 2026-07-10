@@ -434,6 +434,7 @@
   };
 
   const PAPAS_FILTER_META = {
+    todos: { sub: "18 productos" },
     1: { sub: "6 opciones · 1 persona" },
     2: { sub: "6 opciones · para 2" },
     4: { sub: "6 opciones · XL para 4" },
@@ -444,7 +445,7 @@
     extras: new Map(),
     poteOrders: [],
     filter: "todos",
-    papasFilter: "1",
+    papasFilter: "todos",
     poteDraft: null,
   };
 
@@ -628,18 +629,18 @@
   }
 
   function renderPapas() {
-    applyPapasFilter(state.papasFilter);
+    applyPapasFilter(state.papasFilter, { animate: false });
   }
 
   function renderMenu() {
-    applyFilter(state.filter);
+    applyFilter(state.filter, { animate: false });
   }
 
-  function applyFilter(filter) {
+  function applyFilter(filter, { animate = true } = {}) {
     const next = FILTER_META[filter] ? filter : "todos";
     state.filter = next;
 
-    $$("#menuToolbar .filter-btn").forEach((btn) => {
+    $$("#burritoFilters .filter-btn").forEach((btn) => {
       const active = btn.dataset.filter === next;
       btn.classList.toggle("is-active", active);
       btn.setAttribute("aria-selected", active ? "true" : "false");
@@ -651,16 +652,28 @@
 
     const items =
       next === "todos" ? MENU : MENU.filter((m) => m.category === next);
-    menuGrid.innerHTML = items.map((item, i) => menuCardHTML(item, i)).join("");
-    revealCards(menuGrid);
-    syncQtyUI();
+
+    const paint = () => {
+      menuGrid.innerHTML = items.map((item, i) => menuCardHTML(item, i)).join("");
+      revealCards(menuGrid);
+      menuGrid.classList.remove("is-updating");
+      syncQtyUI();
+    };
+
+    if (!animate) {
+      paint();
+      return;
+    }
+
+    menuGrid.classList.add("is-updating");
+    window.setTimeout(paint, 120);
   }
 
-  function applyPapasFilter(size) {
-    const key = PAPAS_FILTER_META[String(size)] ? String(size) : "1";
+  function applyPapasFilter(size, { animate = true } = {}) {
+    const key = PAPAS_FILTER_META[String(size)] ? String(size) : "todos";
     state.papasFilter = key;
 
-    $$("#papasToolbar .filter-btn").forEach((btn) => {
+    $$("#papasFilters .filter-btn").forEach((btn) => {
       const active = btn.dataset.papasSize === key;
       btn.classList.toggle("is-active", active);
       btn.setAttribute("aria-selected", active ? "true" : "false");
@@ -669,55 +682,23 @@
     const meta = PAPAS_FILTER_META[key];
     if (papasSubheading) papasSubheading.textContent = meta.sub;
 
-    const items = PAPAS.filter((p) => String(p.size) === key);
-    papasGrid.innerHTML = items.map((item, i) => menuCardHTML(item, i)).join("");
-    revealCards(papasGrid);
-    syncQtyUI();
-  }
+    const items =
+      key === "todos" ? PAPAS : PAPAS.filter((p) => String(p.size) === key);
 
-  function scrollToShop(id) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
+    const paint = () => {
+      papasGrid.innerHTML = items.map((item, i) => menuCardHTML(item, i)).join("");
+      revealCards(papasGrid);
+      papasGrid.classList.remove("is-updating");
+      syncQtyUI();
+    };
 
-  function setShopRailActive(id) {
-    $$("#shopRail .shop-rail-btn").forEach((btn) => {
-      btn.classList.toggle("is-active", btn.dataset.shop === id);
-    });
-  }
+    if (!animate) {
+      paint();
+      return;
+    }
 
-  function initShopRail() {
-    const rail = $("#shopRail");
-    if (!rail) return;
-
-    rail.addEventListener("click", (e) => {
-      const btn = e.target.closest("[data-shop]");
-      if (!btn) return;
-      const id = btn.dataset.shop;
-      setShopRailActive(id);
-      scrollToShop(id);
-    });
-
-    const sections = ["burritos", "papas", "bebidas"]
-      .map((id) => document.getElementById(id))
-      .filter(Boolean);
-
-    if (!("IntersectionObserver" in window) || !sections.length) return;
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-        if (visible[0]) setShopRailActive(visible[0].target.id);
-      },
-      {
-        rootMargin: "-30% 0px -45% 0px",
-        threshold: [0.15, 0.35, 0.6],
-      }
-    );
-    sections.forEach((section) => io.observe(section));
+    papasGrid.classList.add("is-updating");
+    window.setTimeout(paint, 120);
   }
 
   function getQty(id) {
@@ -1135,11 +1116,11 @@
   }
 
   function bindEvents() {
-    $$("#menuToolbar .filter-btn").forEach((btn) => {
+    $$("#burritoFilters .filter-btn").forEach((btn) => {
       btn.addEventListener("click", () => applyFilter(btn.dataset.filter));
     });
 
-    $$("#papasToolbar .filter-btn").forEach((btn) => {
+    $$("#papasFilters .filter-btn").forEach((btn) => {
       btn.addEventListener("click", () => applyPapasFilter(btn.dataset.papasSize));
     });
 
@@ -1300,6 +1281,5 @@
   syncQtyUI();
   renderOrder();
   bindEvents();
-  initShopRail();
   initReveal();
 })();

@@ -101,7 +101,9 @@
   <nav class="site-nav" id="nav" aria-label="Principal">
     <a href="#inicio">Inicio</a>
     <a href="#experiencia">Experiencia</a>
-    <a href="#carta">Carta</a>
+    <a href="#burritos">Burritos</a>
+    <a href="#papas">Papas</a>
+    <a href="#bebidas">Bebidas</a>
     <a href="#carta" data-open-cart>Pedido</a>
     <a href="#contacto">Contacto</a>
     <a class="nav-cta" href="#carta">Pedir ahora</a>
@@ -239,19 +241,7 @@
       <div class="section-inner">
         <p class="eyebrow reveal">La carta</p>
         <h2 class="section-title reveal">Burritos que pegan</h2>
-        <p class="section-lead reveal">Elige categoría, filtra en un toque y arma el pedido. Todo se suma al carrito.</p>
-
-        <nav class="shop-rail reveal" id="shopRail" aria-label="Categorías de compra">
-          <button type="button" class="shop-rail-btn is-active" data-shop="burritos">
-            Burritos
-          </button>
-          <button type="button" class="shop-rail-btn" data-shop="papas">
-            Papas
-          </button>
-          <button type="button" class="shop-rail-btn" data-shop="bebidas">
-            Bebidas
-          </button>
-        </nav>
+        <p class="section-lead reveal">Todos vienen de a dos. Filtra si quieres, suma al carrito y envía por WhatsApp.</p>
 
         <div class="catalog-block catalog-block--first" id="burritos">
           <div class="menu-toolbar" id="menuToolbar">
@@ -259,7 +249,7 @@
               <h3 id="menuHeading">Burritos</h3>
               <p id="menuSubheading">14 productos · de a dos</p>
             </div>
-            <div class="menu-filters menu-filters--seg" role="tablist" aria-label="Tipo de burrito">
+            <div class="menu-filters" id="burritoFilters" role="tablist" aria-label="Tipo de burrito">
               <button class="filter-btn is-active" role="tab" aria-selected="true" data-filter="todos">
                 Todos <span class="filter-count">14</span>
               </button>
@@ -275,13 +265,16 @@
         </div>
 
         <div class="catalog-block" id="papas">
-          <div class="menu-toolbar catalog-toolbar" id="papasToolbar">
+          <div class="menu-toolbar" id="papasToolbar">
             <div class="menu-heading">
               <h3>Papas</h3>
-              <p id="papasSubheading">6 productos</p>
+              <p id="papasSubheading">18 productos</p>
             </div>
-            <div class="menu-filters menu-filters--seg" role="tablist" aria-label="Tamaño de porción">
-              <button class="filter-btn is-active" role="tab" aria-selected="true" data-papas-size="1">
+            <div class="menu-filters" id="papasFilters" role="tablist" aria-label="Tamaño de porción">
+              <button class="filter-btn is-active" role="tab" aria-selected="true" data-papas-size="todos">
+                Todos <span class="filter-count">18</span>
+              </button>
+              <button class="filter-btn" role="tab" aria-selected="false" data-papas-size="1">
                 Individual <span class="filter-count">6</span>
               </button>
               <button class="filter-btn" role="tab" aria-selected="false" data-papas-size="2">

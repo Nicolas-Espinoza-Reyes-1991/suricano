@@ -1967,6 +1967,20 @@
     window.setInterval(goNext, INTERVAL_MS);
   }
 
+  function jumpToDeepLink() {
+    const hash = (location.hash || "").replace(/^#/, "");
+    if (!hash) return;
+    const target = document.getElementById(hash);
+    if (!target) return;
+    window.setTimeout(() => {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (["burritos", "papas", "bebidas"].includes(hash) || hash.startsWith("sec-")) {
+        setActiveShop(hash);
+      }
+      document.body.classList.add("from-qr");
+    }, 180);
+  }
+
   async function boot() {
     await loadCatalog();
     $("#year").textContent = String(new Date().getFullYear());
@@ -1987,6 +2001,7 @@
     bindEvents();
     initReveal();
     initHeroCarousel();
+    jumpToDeepLink();
     if (restored) {
       showToast("Recuperamos tu pedido", { action: true });
     }

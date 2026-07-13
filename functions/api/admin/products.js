@@ -137,10 +137,20 @@ export async function onRequestPost(context) {
     return json({ error: "type inválido" }, 400);
   }
   if (!body.id || !body.name) {
-    return json({ error: "id y name son obligatorios" }, 400);
+    return json({ error: "Nombre obligatorio" }, 400);
   }
 
   await ensureSchema(env.DB);
+  const existing = await env.DB.prepare(`SELECT id FROM products WHERE id = ?`)
+    .bind(body.id)
+    .first();
+  if (existing) {
+    return json(
+      { error: `Ya existe un producto similar (“${body.id}”). Cambia el nombre.` },
+      400
+    );
+  }
+
   const maxOrder = await env.DB.prepare(
     `SELECT COALESCE(MAX(sort_order), 0) AS m FROM products WHERE type = ?`
   )
@@ -148,37 +158,48 @@ export async function onRequestPost(context) {
     .first();
   const row = productToRow(body, type, Number(maxOrder?.m || 0) + 1);
 
-  await env.DB.prepare(
-    `INSERT INTO products (
-      id, type, name, description, price, image, category, tag, tag_style,
-      heat, featured, spotlight, spotlight_rank, spotlight_label, kind, size,
-      extra_group, flavors, pick, sort_order, active, updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`
-  )
-    .bind(
-      row.id,
-      row.type,
-      row.name,
-      row.description,
-      row.price,
-      row.image,
-      row.category,
-      row.tag,
-      row.tag_style,
-      row.heat,
-      row.featured,
-      row.spotlight,
-      row.spotlight_rank,
-      row.spotlight_label,
-      row.kind,
-      row.size,
-      row.extra_group,
-      row.flavors,
-      row.pick,
-      row.sort_order,
-      row.active
+  try {
+    await env.DB.prepare(
+      `INSERT INTO products (
+        id, type, name, description, price, image, category, tag, tag_style,
+        heat, featured, spotlight, spotlight_rank, spotlight_label, kind, size,
+        extra_group, flavors, pick, sort_order, active, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`
     )
-    .run();
+      .bind(
+        row.id,
+        row.type,
+        row.name,
+        row.description,
+        row.price,
+        row.image,
+        row.category,
+        row.tag,
+        row.tag_style,
+        row.heat,
+        row.featured,
+        row.spotlight,
+        row.spotlight_rank,
+        row.spotlight_label,
+        row.kind,
+        row.size,
+        row.extra_group,
+        row.flavors,
+        row.pick,
+        row.sort_order,
+        row.active
+      )
+      .run();
+  } catch (err) {
+    return json(
+      {
+        error: err.message?.includes("UNIQUE")
+          ? "Ese producto ya existe. Cambia el nombre."
+          : err.message || "No se pudo guardar",
+      },
+      400
+    );
+  }
 
   return json({ ok: true, product: rowToProduct({ ...row, description: row.description }) });
 }

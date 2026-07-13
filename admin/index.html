@@ -2,28 +2,27 @@
 <html lang="es-CL">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="robots" content="noindex, nofollow" />
   <title>Admin · El Suricano</title>
   <link rel="icon" href="../assets/logo-circle.png?v=30" type="image/png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="admin.css?v=3" />
+  <link rel="stylesheet" href="admin.css?v=4" />
 </head>
 <body>
   <div id="loginView" class="login-wrap">
     <form id="loginForm" class="login-card">
       <img src="../assets/logo-circle.png?v=30" alt="" width="72" height="72" />
       <h1>Panel El Suricano</h1>
-      <p>Administra precios, productos y categorías. Acceso privado.</p>
+      <p>Edita precios y productos de la carta.</p>
       <label>
-        Clave de administrador
+        Clave
         <input type="password" id="password" autocomplete="current-password" required />
       </label>
       <button type="submit" class="btn btn-primary">Entrar</button>
       <p id="loginError" class="error" hidden></p>
-      <p class="hint">Configura <code>ADMIN_PASSWORD</code> en Cloudflare Pages.</p>
     </form>
   </div>
 
@@ -37,59 +36,85 @@
         </div>
       </div>
       <div class="top-actions">
-        <button type="button" class="btn btn-ghost" id="seedBtn" title="Cargar carta inicial">Sembrar carta</button>
+        <button type="button" class="btn btn-ghost" id="seedBtn">Restaurar carta</button>
         <a class="btn btn-ghost" href="/" target="_blank" rel="noopener">Ver web</a>
         <button type="button" class="btn btn-ghost" id="logoutBtn">Salir</button>
       </div>
     </header>
+
+    <p class="nav-hint">Elige qué quieres editar. Todo lo que guardes se ve en la web.</p>
 
     <nav class="tabs" role="tablist">
       <button type="button" class="tab is-active" data-view="burrito">Burritos</button>
       <button type="button" class="tab" data-view="papas">Papas</button>
       <button type="button" class="tab" data-view="drink">Bebidas</button>
       <button type="button" class="tab" data-view="extra">Extras</button>
-      <button type="button" class="tab" data-view="custom">Secciones</button>
-      <button type="button" class="tab" data-view="categories">Categorías</button>
+      <button type="button" class="tab" data-view="custom">Otros (Postres, Promos…)</button>
+      <button type="button" class="tab" data-view="filters">Filtros web</button>
     </nav>
 
     <main class="main">
       <section class="toolbar">
-        <h2 id="listTitle">Burritos</h2>
-        <button type="button" class="btn btn-primary" id="newBtn">+ Nuevo</button>
+        <div>
+          <h2 id="listTitle">Burritos</h2>
+          <p id="listLead" class="list-lead">Productos que salen en la carta.</p>
+        </div>
+        <div class="toolbar-actions">
+          <button type="button" class="btn btn-ghost" id="secondaryBtn" hidden></button>
+          <button type="button" class="btn btn-primary" id="newBtn">+ Agregar</button>
+        </div>
       </section>
       <div id="list" class="list"></div>
     </main>
   </div>
 
   <dialog id="editor" class="editor">
-    <form id="editorForm" method="dialog">
+    <form id="editorForm">
       <header>
         <h3 id="editorTitle">Producto</h3>
         <button type="button" class="icon-btn" id="closeEditor" aria-label="Cerrar">×</button>
       </header>
       <div class="fields">
         <input type="hidden" id="f_type" />
-        <label>ID <input id="f_id" required pattern="[a-z0-9\-]+" title="minúsculas, números y guiones" /></label>
-        <label>Nombre <input id="f_name" required /></label>
-        <label>Precio (CLP) <input id="f_price" type="number" min="0" step="100" required /></label>
-        <label>Descripción <textarea id="f_desc" rows="3"></textarea></label>
-        <label>Imagen (ruta o URL) <input id="f_image" placeholder="img_carta/burros/..." /></label>
-        <label class="check"><input type="checkbox" id="f_featured" /> Destacado</label>
-        <label class="check"><input type="checkbox" id="f_active" checked /> Activo</label>
+        <input type="hidden" id="f_id" />
+
+        <label>Nombre del producto
+          <input id="f_name" required placeholder="Ej: Suricano x2" />
+        </label>
+        <label>Precio (CLP)
+          <input id="f_price" type="number" min="0" step="100" required placeholder="8000" />
+        </label>
+        <label>Descripción (opcional)
+          <textarea id="f_desc" rows="3" placeholder="Qué incluye el producto"></textarea>
+        </label>
+        <label>Foto (ruta o link)
+          <input id="f_image" placeholder="img_carta/burros/..." />
+        </label>
+        <label class="check"><input type="checkbox" id="f_featured" /> Destacar en la carta</label>
+        <label class="check"><input type="checkbox" id="f_active" checked /> Visible en la web</label>
 
         <div id="burritoFields" class="type-fields" hidden>
-          <label>Categoría
+          <label>Tipo en la web
             <select id="f_category"></select>
           </label>
-          <label>Tag <input id="f_tag" /></label>
-          <label>Estilo tag
+          <label>Etiqueta corta (opcional)
+            <input id="f_tag" placeholder="Firma, Combo, Veggie…" />
+          </label>
+          <label>Color de etiqueta
             <select id="f_tagStyle">
               <option value="">Normal</option>
-              <option value="is-fresh">Fresh</option>
-              <option value="is-hot">Hot</option>
+              <option value="is-fresh">Verde / fresco</option>
+              <option value="is-hot">Rojo / picante</option>
             </select>
           </label>
-          <label>Picante (0-3) <input id="f_heat" type="number" min="0" max="3" value="0" /></label>
+          <label>Nivel de picante
+            <select id="f_heat">
+              <option value="0">Nada</option>
+              <option value="1">Suave</option>
+              <option value="2">Medio</option>
+              <option value="3">Fuerte</option>
+            </select>
+          </label>
         </div>
 
         <div id="papasFields" class="type-fields" hidden>
@@ -111,22 +136,24 @@
               <option value="potes">Potes</option>
             </select>
           </label>
-          <label>Kind (opcional) <input id="f_kind" placeholder="pote" /></label>
-          <label>Sabores (CSV, solo potes) <input id="f_flavors" placeholder="Mayo, Ají, Ketchup" /></label>
-          <label>Pick <input id="f_pick" type="number" min="0" max="10" value="0" /></label>
+          <label class="check"><input type="checkbox" id="f_isPote" /> Es un pote de aderezos</label>
+          <div id="poteExtraFields" hidden>
+            <label>Sabores (separados por coma)
+              <input id="f_flavors" placeholder="Mayo, Ají, Ketchup" />
+            </label>
+            <label>Cuántos elige el cliente
+              <input id="f_pick" type="number" min="1" max="10" value="3" />
+            </label>
+          </div>
         </div>
 
         <div id="customFields" class="type-fields" hidden>
-          <label>Sección (categoría)
+          <label>Bloque en la carta
             <select id="f_customCategory"></select>
           </label>
-          <label>Tag <input id="f_customTag" /></label>
-          <label>Estilo tag
-            <select id="f_customTagStyle">
-              <option value="">Normal</option>
-              <option value="is-fresh">Fresh</option>
-              <option value="is-hot">Hot</option>
-            </select>
+          <p class="field-hint">Si no ves el bloque, créalo antes con “Nuevo bloque”.</p>
+          <label>Etiqueta corta (opcional)
+            <input id="f_customTag" />
           </label>
         </div>
       </div>
@@ -141,40 +168,69 @@
     </form>
   </dialog>
 
-  <dialog id="catEditor" class="editor">
-    <form id="catForm" method="dialog">
+  <dialog id="blockEditor" class="editor">
+    <form id="blockForm">
       <header>
-        <h3 id="catEditorTitle">Categoría</h3>
-        <button type="button" class="icon-btn" id="closeCatEditor" aria-label="Cerrar">×</button>
+        <h3 id="blockTitle">Nuevo bloque</h3>
+        <button type="button" class="icon-btn" id="closeBlock" aria-label="Cerrar">×</button>
       </header>
       <div class="fields">
-        <label>ID <input id="c_id" required pattern="[a-z0-9\-]+" title="minúsculas, números y guiones" /></label>
-        <label>Nombre <input id="c_label" required /></label>
-        <label>Ámbito
-          <select id="c_scope">
-            <option value="burrito">Filtro de burritos</option>
-            <option value="papas">Filtro de papas</option>
-            <option value="section">Sección nueva en la carta</option>
-          </select>
-        </label>
-        <label>Descripción <textarea id="c_desc" rows="2"></textarea></label>
-        <label>Orden <input id="c_sort" type="number" min="0" step="1" value="1" /></label>
-        <label class="check"><input type="checkbox" id="c_active" checked /> Visible</label>
-        <p class="hint" style="margin:0;text-align:left">
-          <strong>Sección nueva</strong> aparece en la web como bloque propio. Luego crea productos en la pestaña Secciones.
+        <p class="field-hint">
+          Crea un bloque nuevo en la carta (ej. Postres, Promos). Después agregas productos ahí.
         </p>
+        <input type="hidden" id="b_id" />
+        <label>Nombre del bloque
+          <input id="b_label" required placeholder="Ej: Postres" />
+        </label>
+        <label>Texto corto (opcional)
+          <input id="b_desc" placeholder="Dulce para cerrar" />
+        </label>
+        <label class="check"><input type="checkbox" id="b_active" checked /> Visible en la web</label>
       </div>
       <footer>
-        <button type="button" class="btn btn-danger" id="deleteCatBtn" hidden>Eliminar</button>
+        <button type="button" class="btn btn-danger" id="deleteBlockBtn" hidden>Eliminar bloque</button>
         <div class="footer-right">
-          <button type="button" class="btn btn-ghost" id="cancelCatBtn">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Guardar</button>
+          <button type="button" class="btn btn-ghost" id="cancelBlock">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar bloque</button>
         </div>
       </footer>
-      <p id="catError" class="error" hidden></p>
+      <p id="blockError" class="error" hidden></p>
     </form>
   </dialog>
 
-  <script src="admin.js?v=2"></script>
+  <dialog id="filterEditor" class="editor">
+    <form id="filterForm">
+      <header>
+        <h3 id="filterTitle">Filtro</h3>
+        <button type="button" class="icon-btn" id="closeFilter" aria-label="Cerrar">×</button>
+      </header>
+      <div class="fields">
+        <p class="field-hint">
+          Los filtros aparecen como botones en Burritos o Papas (ej. Solo / Combo).
+        </p>
+        <input type="hidden" id="fi_id" />
+        <label>Nombre del filtro
+          <input id="fi_label" required placeholder="Ej: Solo burrito" />
+        </label>
+        <label>Dónde aparece
+          <select id="fi_scope">
+            <option value="burrito">En burritos</option>
+            <option value="papas">En papas</option>
+          </select>
+        </label>
+        <label class="check"><input type="checkbox" id="fi_active" checked /> Visible</label>
+      </div>
+      <footer>
+        <button type="button" class="btn btn-danger" id="deleteFilterBtn" hidden>Eliminar</button>
+        <div class="footer-right">
+          <button type="button" class="btn btn-ghost" id="cancelFilter">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </footer>
+      <p id="filterError" class="error" hidden></p>
+    </form>
+  </dialog>
+
+  <script src="admin.js?v=4"></script>
 </body>
 </html>

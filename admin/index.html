@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Admin · El Suricano</title>
+  <link rel="icon" href="../assets/logo-circle.png?v=30" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <div id="loginView" class="login-wrap">
+    <form id="loginForm" class="login-card">
+      <img src="../assets/logo-circle.png?v=30" alt="" width="72" height="72" />
+      <h1>Panel El Suricano</h1>
+      <p>Administra precios y productos. Acceso privado.</p>
+      <label>
+        Clave de administrador
+        <input type="password" id="password" autocomplete="current-password" required />
+      </label>
+      <button type="submit" class="btn btn-primary">Entrar</button>
+      <p id="loginError" class="error" hidden></p>
+      <p class="hint">Configura <code>ADMIN_PASSWORD</code> en Cloudflare Pages.</p>
+    </form>
+  </div>
+
+  <div id="appView" class="app" hidden>
+    <header class="topbar">
+      <div class="brand">
+        <img src="../assets/logo-circle.png?v=30" alt="" width="40" height="40" />
+        <div>
+          <strong>El Suricano · Admin</strong>
+          <span id="statusLine">Cargando…</span>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button type="button" class="btn btn-ghost" id="seedBtn" title="Cargar carta inicial">Sembrar carta</button>
+        <a class="btn btn-ghost" href="/" target="_blank" rel="noopener">Ver web</a>
+        <button type="button" class="btn btn-ghost" id="logoutBtn">Salir</button>
+      </div>
+    </header>
+
+    <nav class="tabs" role="tablist">
+      <button type="button" class="tab is-active" data-type="burrito">Burritos</button>
+      <button type="button" class="tab" data-type="papas">Papas</button>
+      <button type="button" class="tab" data-type="drink">Bebidas</button>
+      <button type="button" class="tab" data-type="extra">Extras</button>
+    </nav>
+
+    <main class="main">
+      <section class="toolbar">
+        <h2 id="listTitle">Burritos</h2>
+        <button type="button" class="btn btn-primary" id="newBtn">+ Nuevo</button>
+      </section>
+      <div id="list" class="list"></div>
+    </main>
+  </div>
+
+  <dialog id="editor" class="editor">
+    <form id="editorForm" method="dialog">
+      <header>
+        <h3 id="editorTitle">Producto</h3>
+        <button type="button" class="icon-btn" id="closeEditor" aria-label="Cerrar">×</button>
+      </header>
+      <div class="fields">
+        <input type="hidden" id="f_type" />
+        <label>ID <input id="f_id" required pattern="[a-z0-9\-]+" title="minúsculas, números y guiones" /></label>
+        <label>Nombre <input id="f_name" required /></label>
+        <label>Precio (CLP) <input id="f_price" type="number" min="0" step="100" required /></label>
+        <label>Descripción <textarea id="f_desc" rows="3"></textarea></label>
+        <label>Imagen (ruta o URL) <input id="f_image" placeholder="img_carta/burros/..." /></label>
+        <label class="check"><input type="checkbox" id="f_featured" /> Destacado</label>
+        <label class="check"><input type="checkbox" id="f_active" checked /> Activo</label>
+
+        <div id="burritoFields" class="type-fields" hidden>
+          <label>Categoría
+            <select id="f_category">
+              <option value="solo">Solo</option>
+              <option value="papas">Combo + papas</option>
+            </select>
+          </label>
+          <label>Tag <input id="f_tag" /></label>
+          <label>Estilo tag
+            <select id="f_tagStyle">
+              <option value="">Normal</option>
+              <option value="is-fresh">Fresh</option>
+              <option value="is-hot">Hot</option>
+            </select>
+          </label>
+          <label>Picante (0-3) <input id="f_heat" type="number" min="0" max="3" value="0" /></label>
+        </div>
+
+        <div id="papasFields" class="type-fields" hidden>
+          <label>Tamaño
+            <select id="f_size">
+              <option value="1">Individual</option>
+              <option value="2">Para 2</option>
+              <option value="4">XL (4)</option>
+            </select>
+          </label>
+        </div>
+
+        <div id="extraFields" class="type-fields" hidden>
+          <label>Grupo
+            <select id="f_group">
+              <option value="proteinas">Proteínas</option>
+              <option value="vegetales">Vegetales</option>
+              <option value="salsas">Salsas</option>
+              <option value="potes">Potes</option>
+            </select>
+          </label>
+          <label>Kind (opcional) <input id="f_kind" placeholder="pote" /></label>
+          <label>Sabores (CSV, solo potes) <input id="f_flavors" placeholder="Mayo, Ají, Ketchup" /></label>
+          <label>Pick <input id="f_pick" type="number" min="0" max="10" value="0" /></label>
+        </div>
+      </div>
+      <footer>
+        <button type="button" class="btn btn-danger" id="deleteBtn" hidden>Eliminar</button>
+        <div class="footer-right">
+          <button type="button" class="btn btn-ghost" id="cancelBtn">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </footer>
+      <p id="editorError" class="error" hidden></p>
+    </form>
+  </dialog>
+
+  <script src="admin.js"></script>
+</body>
+</html>

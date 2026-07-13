@@ -1,0 +1,16 @@
+{
+  "name": "suricano",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler pages dev . --d1=DB --compatibility-date=2024-11-01",
+    "db:create": "wrangler d1 create suricano-db",
+    "db:migrate:local": "wrangler d1 execute suricano-db --local --file=./migrations/0001_init.sql",
+    "db:migrate:remote": "wrangler d1 execute suricano-db --remote --file=./migrations/0001_init.sql",
+    "db:seed:local": "node scripts/seed-d1.mjs --local",
+    "db:seed:remote": "node scripts/seed-d1.mjs --remote"
+  },
+  "devDependencies": {
+    "wrangler": "^4.14.0"
+  }
+}

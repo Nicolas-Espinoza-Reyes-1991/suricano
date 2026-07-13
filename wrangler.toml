@@ -1,0 +1,15 @@
+name = "suricano"
+compatibility_date = "2024-11-01"
+pages_build_output_dir = "."
+
+# Binding debe llamarse DB (lo usa functions/ con env.DB)
+# En Cloudflare Pages → Settings → Bindings:
+#   Variable name: DB  →  database: suricano-db
+# Variables:
+#   ADMIN_PASSWORD = tu clave secreta
+
+[[d1_databases]]
+binding = "DB"
+database_name = "suricano-db"
+database_id = "aaed992f-9eec-402b-bbae-7816eb78fe7b"
+preview_database_id = "aaed992f-9eec-402b-bbae-7816eb78fe7b"

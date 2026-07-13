@@ -2,5 +2,9 @@
 Thumbs.db
 *.log
 .env
+.env.*
 .vscode/
 .idea/
+node_modules/
+.wrangler/
+migrations/_seed_generated.sql

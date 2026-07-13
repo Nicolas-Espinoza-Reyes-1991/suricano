@@ -18,7 +18,7 @@
   const IMG_PAPAS = "img_carta/papas";
   const papaImg = (file) => encodeURI(`${IMG_PAPAS}/${file}`);
 
-  const MENU = [
+  let MENU = [
     {
       id: "suricano-x2",
       name: "Suricano x2",
@@ -198,7 +198,7 @@
     },
   ];
 
-  const DRINKS = [
+  let DRINKS = [
     {
       id: "coca-500",
       name: "Coca-Cola 500 cc",
@@ -217,7 +217,7 @@
     },
   ];
 
-  const PAPAS = [
+  let PAPAS = [
     {
       id: "papa-frita",
       name: "Papa frita",
@@ -381,7 +381,7 @@
     },
   ];
 
-  const EXTRAS = [
+  let EXTRAS = [
     { id: "ex-carne", name: "Carne", price: 2000, group: "proteinas" },
     { id: "ex-pollo", name: "Pollo", price: 2000, group: "proteinas" },
     { id: "ex-pollo-crema", name: "Pollo con crema", price: 2500, group: "proteinas" },
@@ -420,7 +420,7 @@
     },
   ];
 
-  const EXTRA_GROUPS = [
+  let EXTRA_GROUPS = [
     { id: "proteinas", label: "Proteínas" },
     { id: "vegetales", label: "Vegetales" },
     { id: "salsas", label: "Salsas" },
@@ -1273,6 +1273,32 @@
     $$(".reveal").forEach((el) => io.observe(el));
   }
 
+  function applyCatalog(data) {
+    if (Array.isArray(data.burritos) && data.burritos.length) MENU = data.burritos;
+    if (Array.isArray(data.papas) && data.papas.length) PAPAS = data.papas;
+    if (Array.isArray(data.drinks) && data.drinks.length) DRINKS = data.drinks;
+    if (Array.isArray(data.extras) && data.extras.length) EXTRAS = data.extras;
+    if (Array.isArray(data.extraGroups) && data.extraGroups.length) {
+      EXTRA_GROUPS = data.extraGroups;
+    }
+  }
+
+  async function loadCatalog() {
+    const tryUrls = ["/api/menu", "/data/menu.json"];
+    for (const url of tryUrls) {
+      try {
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) continue;
+        const data = await res.json();
+        applyCatalog(data);
+        return data.source || url;
+      } catch (_) {
+        /* next */
+      }
+    }
+    return "fallback";
+  }
+
   function initHeroCarousel() {
     const root = document.querySelector(".hero-carousel");
     if (!root) return;
@@ -1330,15 +1356,19 @@
     window.setInterval(goNext, INTERVAL_MS);
   }
 
-  initHeroCarousel();
+  async function boot() {
+    await loadCatalog();
+    $("#year").textContent = String(new Date().getFullYear());
+    initWhatsAppLinks();
+    renderMenu();
+    renderPapas();
+    renderDrinks();
+    syncQtyUI();
+    renderOrder();
+    bindEvents();
+    initReveal();
+    initHeroCarousel();
+  }
 
-  $("#year").textContent = String(new Date().getFullYear());
-  initWhatsAppLinks();
-  renderMenu();
-  renderPapas();
-  renderDrinks();
-  syncQtyUI();
-  renderOrder();
-  bindEvents();
-  initReveal();
+  boot();
 })();

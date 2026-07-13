@@ -1,0 +1,519 @@
+{
+  "burritos": [
+    {
+      "id": "suricano-x2",
+      "name": "Suricano x2",
+      "desc": "Carne, salsas queso cheddar y sour, lechuga y tomate. (Solo por par)",
+      "price": 8000,
+      "category": "solo",
+      "tag": "Firma",
+      "tagStyle": "",
+      "heat": 2,
+      "image": "img_carta/burros/burritos_suricano_x2.webp",
+      "featured": true,
+      "spotlight": true,
+      "spotlightRank": 2,
+      "spotlightLabel": "El de la casa"
+    },
+    {
+      "id": "chicken-x2",
+      "name": "Chicken x2",
+      "desc": "Pollo, cebolla, salsas queso cheddar y sour, lechuga y tomate. (Solo por par)",
+      "price": 8000,
+      "category": "solo",
+      "tag": "Pollo",
+      "tagStyle": "is-fresh",
+      "heat": 1,
+      "image": "img_carta/burros/burritos_chicken_x2.webp",
+      "featured": false
+    },
+    {
+      "id": "frijolero-x2",
+      "name": "Frijolero x2",
+      "desc": "Frijol negro, cebolla morada, queso mantecoso, (ají infierno opcional), sour, cheddar, tomate y lechuga. (Solo por par)",
+      "price": 8000,
+      "category": "solo",
+      "tag": "Veggie",
+      "tagStyle": "is-fresh",
+      "heat": 2,
+      "image": "img_carta/burros/burritos_frijolero_x2.webp",
+      "featured": false
+    },
+    {
+      "id": "champipollo-x2",
+      "name": "Champipollo x2",
+      "desc": "Champiñón, pollo, cebolla, salsas cheddar y sour, lechuga y tomate. (Solo por par)",
+      "price": 8500,
+      "category": "solo",
+      "tag": "Mix",
+      "tagStyle": "",
+      "heat": 1,
+      "image": "img_carta/burros/burritos_champipollo_x2.webp",
+      "featured": true
+    },
+    {
+      "id": "wey-x2",
+      "name": "Burrito Wey x2",
+      "desc": "Carne, frijol negro, cebolla morada, pimentón verde, choclo, tomate, lechuga, sour, cheddar, ajonesa y (ají infierno opcional). (Solo por par)",
+      "price": 9000,
+      "category": "solo",
+      "tag": "Loaded",
+      "tagStyle": "is-hot",
+      "heat": 3,
+      "image": "img_carta/burros/burritos_wey_x2.webp",
+      "featured": true,
+      "spotlight": true,
+      "spotlightRank": 3,
+      "spotlightLabel": "El más completo"
+    },
+    {
+      "id": "guacamole-x2",
+      "name": "Burrito Guacamole x2",
+      "desc": "1 proteína (carne/frijol/pollo/champiñón), cebolla morada, pimentón verde, choclo, guacamole, (jalapeño opcional), sour, cheddar y lechuga. (Solo por par)",
+      "price": 9500,
+      "category": "solo",
+      "tag": "Guac",
+      "tagStyle": "is-fresh",
+      "heat": 2,
+      "image": "img_carta/burros/burritos_guacamole_x2.webp",
+      "featured": false
+    },
+    {
+      "id": "guacamole-mixto-x2",
+      "name": "Burrito Guacamole Mixto x2",
+      "desc": "2 proteínas, cebolla morada, pimentón verde, choclo, guacamole, (jalapeño opcional), sour, cheddar y lechuga. (Solo por par)",
+      "price": 10000,
+      "category": "solo",
+      "tag": "Top",
+      "tagStyle": "is-hot",
+      "heat": 2,
+      "image": "img_carta/burros/burritos_guacamole_mixto_x2.webp",
+      "featured": true,
+      "spotlight": true,
+      "spotlightRank": 1,
+      "spotlightLabel": "El más pedido"
+    },
+    {
+      "id": "suricano-papas",
+      "name": "Suricano x2 + Papas",
+      "desc": "Carne, salsas cheddar y sour, lechuga y tomate + papas fritas. (Solo por par)",
+      "price": 9000,
+      "category": "papas",
+      "tag": "Combo",
+      "tagStyle": "",
+      "heat": 2,
+      "image": "img_carta/burros/burritos_papas_suricano_x2.webp",
+      "featured": true
+    },
+    {
+      "id": "chicken-papas",
+      "name": "Chicken x2 + Papas",
+      "desc": "Pollo, cebolla, salsas cheddar y sour, lechuga y tomate + papas fritas. (Solo por par)",
+      "price": 9000,
+      "category": "papas",
+      "tag": "Combo",
+      "tagStyle": "is-fresh",
+      "heat": 1,
+      "image": "img_carta/burros/burritos_papas_chicken_x2.webp",
+      "featured": false
+    },
+    {
+      "id": "frijolero-papas",
+      "name": "Frijolero x2 + Papas",
+      "desc": "Frijol negro, cebolla morada, queso mantecoso, (ají infierno opcional), sour, cheddar, tomate y lechuga + papas fritas. (Solo por par)",
+      "price": 9000,
+      "category": "papas",
+      "tag": "Combo",
+      "tagStyle": "is-fresh",
+      "heat": 2,
+      "image": "img_carta/burros/burritos_papas_frijolero_x2.webp",
+      "featured": false
+    },
+    {
+      "id": "champipollo-papas",
+      "name": "Champipollo x2 + Papas",
+      "desc": "Champiñón, pollo, cebolla, salsas cheddar y sour, lechuga y tomate + papas fritas. (Solo por par)",
+      "price": 10000,
+      "category": "papas",
+      "tag": "Combo",
+      "tagStyle": "",
+      "heat": 1,
+      "image": "img_carta/burros/burritos_papas_champipollo_x2.webp",
+      "featured": false
+    },
+    {
+      "id": "wey-papas",
+      "name": "Burrito Wey x2 + Papas",
+      "desc": "Carne, frijol negro, cebolla morada, pimentón verde, choclo, tomate, lechuga, sour, cheddar, ajonesa y (ají infierno opcional) + papas fritas. (Solo por par)",
+      "price": 11000,
+      "category": "papas",
+      "tag": "Combo",
+      "tagStyle": "is-hot",
+      "heat": 3,
+      "image": "img_carta/burros/burritos_papas_wey_x2.webp",
+      "featured": true
+    },
+    {
+      "id": "guacamole-papas",
+      "name": "Burrito Guacamole x2 + Papas",
+      "desc": "1 proteína, cebolla morada, pimentón verde, choclo, guacamole, (jalapeño opcional), sour, cheddar y lechuga + papas fritas. (Solo por par)",
+      "price": 12000,
+      "category": "papas",
+      "tag": "Combo",
+      "tagStyle": "is-fresh",
+      "heat": 2,
+      "image": "img_carta/burros/burritos_papas_guacamole_x2.webp",
+      "featured": false
+    },
+    {
+      "id": "guacamole-mixto-papas",
+      "name": "Burrito Guacamole Mixto x2 + Papas",
+      "desc": "2 proteínas, cebolla morada, pimentón verde, choclo, guacamole, (jalapeño opcional), sour, cheddar y lechuga + papas fritas. (Solo por par)",
+      "price": 13000,
+      "category": "papas",
+      "tag": "Combo",
+      "tagStyle": "is-hot",
+      "heat": 2,
+      "image": "img_carta/burros/burritos_guacamole_mixto_x2.webp",
+      "featured": true
+    }
+  ],
+  "papas": [
+    {
+      "id": "papa-frita",
+      "name": "Papa frita",
+      "price": 5000,
+      "kind": "papas",
+      "size": 1,
+      "image": "img_carta/papas/papas_papa_frita%20(1).webp"
+    },
+    {
+      "id": "salchi-normal",
+      "name": "Salchi normal",
+      "price": 5500,
+      "kind": "papas",
+      "size": 1,
+      "image": "img_carta/papas/papas_salchi_normal.webp"
+    },
+    {
+      "id": "salchi-suprema",
+      "name": "Salchi Suprema",
+      "price": 6000,
+      "kind": "papas",
+      "size": 1,
+      "featured": true,
+      "desc": "Papa natural, salchicha, salsa queso cheddar, salsa sour, tomate y cebollín.",
+      "image": "img_carta/papas/papas_salchi_suprema%20(1).webp"
+    },
+    {
+      "id": "papa-suprema-frijol",
+      "name": "Papa Suprema Frijol",
+      "price": 6000,
+      "kind": "papas",
+      "size": 1,
+      "desc": "Papa natural, frijol negro salteado y sazonado, salsa queso cheddar, salsa sour, tomate y cebollín.",
+      "image": "img_carta/papas/papas_suprema_frijol.webp"
+    },
+    {
+      "id": "papa-suprema",
+      "name": "Papa Suprema",
+      "price": 7000,
+      "kind": "papas",
+      "size": 1,
+      "featured": true,
+      "desc": "Papa natural, carne, salsa queso cheddar, salsa sour, tomate y cebollín.",
+      "image": "img_carta/papas/papas_papa_suprema_carne.webp"
+    },
+    {
+      "id": "papa-chicken",
+      "name": "Papa Chicken",
+      "price": 7000,
+      "kind": "papas",
+      "size": 1,
+      "featured": true,
+      "desc": "Papas naturales, pollo sazonado con cebolla, choclo y ciboulette.",
+      "image": "img_carta/papas/papas_papa_chicken%20(1).webp"
+    },
+    {
+      "id": "papa-frita-2",
+      "name": "Papa frita (para 2)",
+      "price": 7000,
+      "kind": "papas",
+      "size": 2,
+      "image": "img_carta/papas/papas_papa_frita%20(1).webp"
+    },
+    {
+      "id": "salchi-normal-2",
+      "name": "Salchi normal (para 2)",
+      "price": 9000,
+      "kind": "papas",
+      "size": 2,
+      "image": "img_carta/papas/papas_salchi_normal.webp"
+    },
+    {
+      "id": "salchi-suprema-2",
+      "name": "Salchi Suprema (para 2)",
+      "price": 9500,
+      "kind": "papas",
+      "size": 2,
+      "featured": true,
+      "desc": "Papa natural, salchicha, salsa queso cheddar, salsa sour, tomate y cebollín.",
+      "image": "img_carta/papas/papas_salchi_suprema%20(1).webp"
+    },
+    {
+      "id": "papa-suprema-frijol-2",
+      "name": "Papa Suprema Frijol (para 2)",
+      "price": 9500,
+      "kind": "papas",
+      "size": 2,
+      "desc": "Papa natural, frijol negro salteado y sazonado, salsa queso cheddar, salsa sour, tomate y cebollín.",
+      "image": "img_carta/papas/papas_suprema_frijol.webp"
+    },
+    {
+      "id": "papa-suprema-2",
+      "name": "Papa Suprema (para 2)",
+      "price": 10000,
+      "kind": "papas",
+      "size": 2,
+      "featured": true,
+      "desc": "Papa natural, carne, salsa queso cheddar, salsa sour, tomate y cebollín.",
+      "image": "img_carta/papas/papas_papa_suprema_carne.webp"
+    },
+    {
+      "id": "papa-chicken-2",
+      "name": "Papa Chicken (para 2)",
+      "price": 10000,
+      "kind": "papas",
+      "size": 2,
+      "featured": true,
+      "desc": "Papas naturales, pollo sazonado con cebolla, choclo y ciboulette.",
+      "image": "img_carta/papas/papas_papa_chicken%20(1).webp"
+    },
+    {
+      "id": "papa-frita-xl",
+      "name": "Papa frita XL (para 4)",
+      "price": 12000,
+      "kind": "papas",
+      "size": 4,
+      "image": "img_carta/papas/papas_xl_papa_frita%20(1).webp"
+    },
+    {
+      "id": "salchi-normal-xl",
+      "name": "Salchi normal XL (para 4)",
+      "price": 14000,
+      "kind": "papas",
+      "size": 4,
+      "image": "img_carta/papas/papas_xl_salchi_normal%20(1).webp"
+    },
+    {
+      "id": "salchi-suprema-xl",
+      "name": "Salchi Suprema XL (para 4)",
+      "price": 16000,
+      "kind": "papas",
+      "size": 4,
+      "featured": true,
+      "image": "img_carta/papas/papas_xl_salchi_suprema%20(1).webp"
+    },
+    {
+      "id": "papa-suprema-frijol-xl",
+      "name": "Papa Suprema Frijol XL (para 4)",
+      "price": 16000,
+      "kind": "papas",
+      "size": 4,
+      "image": "img_carta/papas/papas_xl_suprema_frijol%20(1).webp"
+    },
+    {
+      "id": "papa-suprema-xl",
+      "name": "Suprema XL (para 4)",
+      "price": 17500,
+      "kind": "papas",
+      "size": 4,
+      "featured": true,
+      "image": "img_carta/papas/papas_xl_suprema%20(1).webp"
+    },
+    {
+      "id": "papa-pollo-xl",
+      "name": "Pollo XL (para 4)",
+      "price": 17500,
+      "kind": "papas",
+      "size": 4,
+      "featured": true,
+      "image": "img_carta/papas/papas_xl_chicken%20(1).webp"
+    }
+  ],
+  "drinks": [
+    {
+      "id": "coca-500",
+      "name": "Coca-Cola 500 cc",
+      "price": 2500,
+      "kind": "drink",
+      "featured": true,
+      "image": "img_carta/bebidas/bebida_cocacola_500.webp"
+    },
+    {
+      "id": "coca-15l",
+      "name": "Coca-Cola 1.5L (Cero o Normal)",
+      "price": 3500,
+      "kind": "drink",
+      "featured": true,
+      "image": "img_carta/bebidas/bebida_cocacola_15l.webp"
+    }
+  ],
+  "extras": [
+    {
+      "id": "ex-carne",
+      "name": "Carne",
+      "price": 2000,
+      "group": "proteinas"
+    },
+    {
+      "id": "ex-pollo",
+      "name": "Pollo",
+      "price": 2000,
+      "group": "proteinas"
+    },
+    {
+      "id": "ex-pollo-crema",
+      "name": "Pollo con crema",
+      "price": 2500,
+      "group": "proteinas"
+    },
+    {
+      "id": "ex-champi",
+      "name": "Champiñón",
+      "price": 2500,
+      "group": "proteinas"
+    },
+    {
+      "id": "ex-champi-crema",
+      "name": "Champiñón con crema",
+      "price": 3000,
+      "group": "proteinas"
+    },
+    {
+      "id": "ex-frijol",
+      "name": "Frijol",
+      "price": 1000,
+      "group": "proteinas"
+    },
+    {
+      "id": "ex-cebolla-caram",
+      "name": "Cebolla caramelizada",
+      "price": 1500,
+      "group": "vegetales"
+    },
+    {
+      "id": "ex-choclo",
+      "name": "Choclo",
+      "price": 500,
+      "group": "vegetales"
+    },
+    {
+      "id": "ex-pepinillos",
+      "name": "Pepinillos",
+      "price": 1000,
+      "group": "vegetales"
+    },
+    {
+      "id": "ex-cebolla",
+      "name": "Cebolla",
+      "price": 500,
+      "group": "vegetales"
+    },
+    {
+      "id": "ex-cebolla-morada",
+      "name": "Cebolla morada",
+      "price": 800,
+      "group": "vegetales"
+    },
+    {
+      "id": "ex-pimenton",
+      "name": "Pimentón",
+      "price": 800,
+      "group": "vegetales"
+    },
+    {
+      "id": "ex-cheddar",
+      "name": "Salsa cheddar",
+      "price": 1000,
+      "group": "salsas"
+    },
+    {
+      "id": "ex-parmesano",
+      "name": "Queso parmesano",
+      "price": 500,
+      "group": "salsas"
+    },
+    {
+      "id": "ex-aji-infierno",
+      "name": "Ají infierno",
+      "price": 800,
+      "group": "salsas"
+    },
+    {
+      "id": "ex-ajonesa",
+      "name": "Ajonesa",
+      "price": 1000,
+      "group": "salsas"
+    },
+    {
+      "id": "ex-mayo-ahumada",
+      "name": "Mayonesa ahumada picante",
+      "price": 800,
+      "group": "salsas"
+    },
+    {
+      "id": "ex-rancho",
+      "name": "Rancho de salsa",
+      "price": 800,
+      "group": "salsas"
+    },
+    {
+      "id": "ex-potes",
+      "name": "3 potes de aderezo",
+      "price": 1000,
+      "group": "potes",
+      "kind": "pote",
+      "flavors": [
+        "Mayo",
+        "Ají",
+        "Ketchup",
+        "Mostaza"
+      ],
+      "pick": 3
+    },
+    {
+      "id": "ex-potes-premium",
+      "name": "3 potes de aderezo premium",
+      "price": 2000,
+      "group": "potes",
+      "kind": "pote",
+      "flavors": [
+        "Ajonesa",
+        "Barbacoa",
+        "Ají infierno",
+        "Queso cheddar"
+      ],
+      "pick": 3
+    }
+  ],
+  "extraGroups": [
+    {
+      "id": "proteinas",
+      "label": "Proteínas"
+    },
+    {
+      "id": "vegetales",
+      "label": "Vegetales"
+    },
+    {
+      "id": "salsas",
+      "label": "Salsas"
+    },
+    {
+      "id": "potes",
+      "label": "Potes de aderezo"
+    }
+  ],
+  "updatedAt": "2026-07-13T19:49:44.612Z"
+}

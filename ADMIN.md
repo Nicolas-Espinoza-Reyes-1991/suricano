@@ -51,3 +51,4 @@ npm run dev
 - Las imágenes siguen en `img_carta/...` (solo editas la ruta/URL).
 - Si D1 no está lista, la web pública usa `data/menu.json` o el fallback de `main.js`.
 - Opcional: protege `/admin` además con Cloudflare Access (gratis).
+- **No hay botón “Restaurar carta” en el panel** (evita borrar sin querer). El seed solo se hace por CLI (`npm run db:seed:remote`) en setup inicial.

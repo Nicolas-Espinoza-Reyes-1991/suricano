@@ -3,23 +3,12 @@
 
   const TOKEN_KEY = "suricano_admin_token";
 
-  const titles = {
-    burrito: "Burritos",
-    papas: "Papas",
-    drink: "Bebidas",
-    extra: "Extras",
-    custom: "Otros en la carta",
-    filters: "Filtros de la web",
-  };
-
-  const leads = {
-    burrito: "Edita burritos. El filtro Solo / Combo está en “Filtros web”.",
-    papas: "Edita papas por tamaño.",
-    drink: "Bebidas de la carta.",
-    extra: "Extras del carrito (salsas, potes…).",
-    custom: "Bloques extra como Postres o Promos. Primero crea el bloque, luego productos.",
-    filters: "Botones de filtro en Burritos y Papas (no son productos).",
-  };
+  const CORE_TABS = [
+    { view: "burrito", label: "Burritos", lead: "Menú de burritos." },
+    { view: "papas", label: "Papas", lead: "Menú de papas." },
+    { view: "drink", label: "Bebidas", lead: "Bebidas de la carta." },
+    { view: "extra", label: "Extras", lead: "Extras del carrito (salsas, potes…)." },
+  ];
 
   const el = {
     loginView: document.getElementById("loginView"),
@@ -28,12 +17,12 @@
     password: document.getElementById("password"),
     loginError: document.getElementById("loginError"),
     statusLine: document.getElementById("statusLine"),
+    tabs: document.getElementById("tabs"),
     list: document.getElementById("list"),
     listTitle: document.getElementById("listTitle"),
     listLead: document.getElementById("listLead"),
     newBtn: document.getElementById("newBtn"),
     secondaryBtn: document.getElementById("secondaryBtn"),
-    seedBtn: document.getElementById("seedBtn"),
     logoutBtn: document.getElementById("logoutBtn"),
     editor: document.getElementById("editor"),
     editorForm: document.getElementById("editorForm"),
@@ -123,33 +112,60 @@
     el.appView.style.display = "";
   }
 
-  function catsByScope(scope) {
-    return categories
-      .filter((c) => c.scope === scope)
-      .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
-  }
-
   function sectionCats() {
-    return catsByScope("section");
+    return categories
+      .filter((c) => c.scope === "section")
+      .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0) || a.label.localeCompare(b.label));
   }
 
   function filterCats() {
-    return categories.filter((c) => c.scope === "burrito" || c.scope === "papas");
+    return categories
+      .filter((c) => c.scope === "burrito" || c.scope === "papas")
+      .sort((a, b) => a.scope.localeCompare(b.scope) || (a.sort_order || 0) - (b.sort_order || 0));
   }
 
-  function fillCategorySelects() {
-    const burritoSel = document.getElementById("f_category");
-    const customSel = document.getElementById("f_customCategory");
-    const burritoOpts = catsByScope("burrito").filter((c) => c.active !== false);
-    const sectionOpts = sectionCats().filter((c) => c.active !== false);
+  function burritoFilters() {
+    return categories
+      .filter((c) => c.scope === "burrito" && c.active !== false)
+      .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+  }
 
-    burritoSel.innerHTML = burritoOpts.length
-      ? burritoOpts.map((c) => `<option value="${c.id}">${c.label}</option>`).join("")
-      : `<option value="solo">Solo</option><option value="papas">Combo + papas</option>`;
+  function isSectionView(view = currentView) {
+    return String(view).startsWith("sec:");
+  }
 
-    customSel.innerHTML = sectionOpts.length
-      ? sectionOpts.map((c) => `<option value="${c.id}">${c.label}</option>`).join("")
-      : `<option value="">— Crea un bloque primero —</option>`;
+  function sectionIdFromView(view = currentView) {
+    return isSectionView(view) ? view.slice(4) : "";
+  }
+
+  function currentSection() {
+    const id = sectionIdFromView();
+    return categories.find((c) => c.id === id) || null;
+  }
+
+  function renderTabs() {
+    const sections = sectionCats();
+    const parts = CORE_TABS.map(
+      (t) =>
+        `<button type="button" class="tab${currentView === t.view ? " is-active" : ""}" data-view="${t.view}">${t.label}</button>`
+    );
+
+    sections.forEach((s) => {
+      const view = `sec:${s.id}`;
+      const hiddenMark = s.active === false ? " ·" : "";
+      parts.push(
+        `<button type="button" class="tab tab-section${currentView === view ? " is-active" : ""}" data-view="${view}">${s.label}${hiddenMark}</button>`
+      );
+    });
+
+    parts.push(
+      `<button type="button" class="tab tab-add" data-action="add-section" title="Nueva sección en la carta">+ Sección</button>`
+    );
+    parts.push(
+      `<button type="button" class="tab${currentView === "filters" ? " is-active" : ""}" data-view="filters">Filtros</button>`
+    );
+
+    el.tabs.innerHTML = parts.join("");
   }
 
   function setTypeFields(type) {
@@ -159,29 +175,65 @@
     document.getElementById("customFields").hidden = type !== "custom";
   }
 
+  function fillBurritoFilters() {
+    const sel = document.getElementById("f_category");
+    const opts = burritoFilters();
+    sel.innerHTML = opts.length
+      ? opts.map((c) => `<option value="${c.id}">${c.label}</option>`).join("")
+      : `<option value="solo">Solo</option><option value="papas">Combo + papas</option>`;
+  }
+
   function updateToolbar() {
-    el.listTitle.textContent = titles[currentView];
-    el.listLead.textContent = leads[currentView];
     el.secondaryBtn.hidden = true;
 
-    if (currentView === "custom") {
+    if (currentView === "filters") {
+      el.listTitle.textContent = "Filtros de la web";
+      el.listLead.textContent = "Botones Solo / Combo / tamaños en Burritos y Papas.";
+      el.newBtn.textContent = "+ Filtro";
+      return;
+    }
+
+    if (isSectionView()) {
+      const sec = currentSection();
+      const count = products.filter((p) => p.type === "custom" && p.category === sec?.id).length;
+      el.listTitle.textContent = `${sec?.label || "Sección"} (${count})`;
+      el.listLead.textContent =
+        sec?.description || "Productos de esta sección. Se muestran en la carta pública.";
       el.newBtn.textContent = "+ Producto";
       el.secondaryBtn.hidden = false;
-      el.secondaryBtn.textContent = "+ Nuevo bloque";
-    } else if (currentView === "filters") {
-      el.newBtn.textContent = "+ Filtro";
-    } else {
-      el.newBtn.textContent = "+ Agregar";
+      el.secondaryBtn.textContent = "Editar sección";
+      return;
     }
+
+    const core = CORE_TABS.find((t) => t.view === currentView);
+    const count = products.filter((p) => p.type === currentView).length;
+    el.listTitle.textContent = `${core?.label || currentView} (${count})`;
+    el.listLead.textContent = core?.lead || "";
+    el.newBtn.textContent = "+ Agregar";
+  }
+
+  function productCard(p) {
+    const img = p.image
+      ? `<img src="/${p.image.replace(/^\//, "")}" alt="" onerror="this.style.opacity=.2" />`
+      : `<div class="card-placeholder"></div>`;
+    return `
+      <article class="card" data-id="${p.id}">
+        ${img}
+        <div>
+          <h3>${p.name}${p.active === false ? " · oculto" : ""}</h3>
+          <p>${p.desc || p.description || "Sin descripción"}</p>
+        </div>
+        <div class="price">${money(p.price)}</div>
+      </article>`;
   }
 
   function renderList() {
-    fillCategorySelects();
+    renderTabs();
+    fillBurritoFilters();
     updateToolbar();
 
     if (currentView === "filters") {
       const items = filterCats();
-      el.listTitle.textContent = `Filtros (${items.length})`;
       if (!items.length) {
         el.list.innerHTML = `<div class="empty-state"><p>No hay filtros. Agrega “Solo”, “Combo”, etc.</p></div>`;
         return;
@@ -194,7 +246,7 @@
             <div class="card-badge">${where}</div>
             <div>
               <h3>${c.label}${c.active === false ? " · oculto" : ""}</h3>
-              <p>Botón de filtro en la web</p>
+              <p>Filtro en la web</p>
             </div>
           </article>`;
         })
@@ -202,102 +254,52 @@
       return;
     }
 
-    if (currentView === "custom") {
-      const blocks = sectionCats();
-      const customs = products.filter((p) => p.type === "custom");
-      el.listTitle.textContent = `Otros (${customs.length})`;
-
-      if (!blocks.length && !customs.length) {
-        el.list.innerHTML = `
-          <div class="empty-state">
-            <p><strong>¿Quieres Postres, Promos u otra sección?</strong></p>
-            <p>1) Crea un <em>bloque</em> · 2) Agrega productos dentro</p>
-            <button type="button" class="btn btn-primary" id="emptyNewBlock">+ Crear primer bloque</button>
-          </div>`;
-        document.getElementById("emptyNewBlock")?.addEventListener("click", () => openBlockEditor(null));
+    if (isSectionView()) {
+      const sec = currentSection();
+      if (!sec) {
+        currentView = "burrito";
+        renderList();
         return;
       }
+      const items = products
+        .filter((p) => p.type === "custom" && p.category === sec.id)
+        .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0) || a.name.localeCompare(b.name));
 
-      const parts = [];
-      blocks.forEach((b) => {
-        const inBlock = customs.filter((p) => p.category === b.id);
-        parts.push(`
-          <div class="group-head">
-            <div>
-              <h3>${b.label}${b.active === false ? " · oculto" : ""}</h3>
-              <p>${b.description || `${inBlock.length} producto(s)`}</p>
-            </div>
-            <button type="button" class="btn btn-ghost btn-sm" data-edit-block="${b.id}">Editar bloque</button>
-          </div>`);
-        if (!inBlock.length) {
-          parts.push(`<p class="empty-inline">Sin productos aún. Pulsa “+ Producto”.</p>`);
-        } else {
-          inBlock.forEach((p) => {
-            const img = p.image
-              ? `<img src="/${p.image.replace(/^\//, "")}" alt="" onerror="this.style.opacity=.2" />`
-              : `<div class="card-placeholder"></div>`;
-            parts.push(`
-              <article class="card" data-id="${p.id}">
-                ${img}
-                <div>
-                  <h3>${p.name}</h3>
-                  <p>${p.desc || p.description || "Sin descripción"}</p>
-                </div>
-                <div class="price">${money(p.price)}</div>
-              </article>`);
-          });
-        }
-      });
-
-      const orphans = customs.filter((p) => !blocks.some((b) => b.id === p.category));
-      orphans.forEach((p) => {
-        parts.push(`
-          <article class="card" data-id="${p.id}">
-            <div class="card-placeholder"></div>
-            <div>
-              <h3>${p.name}</h3>
-              <p>Sin bloque asignado</p>
-            </div>
-            <div class="price">${money(p.price)}</div>
-          </article>`);
-      });
-
-      el.list.innerHTML = parts.join("");
+      if (!items.length) {
+        el.list.innerHTML = `
+          <div class="empty-state">
+            <p><strong>${sec.label}</strong> aún no tiene productos.</p>
+            <p>Agrega el primero para que se vea en la web.</p>
+          </div>`;
+        return;
+      }
+      el.list.innerHTML = items.map(productCard).join("");
       return;
     }
 
-    const items = products.filter((p) => p.type === currentView);
-    el.listTitle.textContent = `${titles[currentView]} (${items.length})`;
+    const items = products
+      .filter((p) => p.type === currentView)
+      .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0) || a.name.localeCompare(b.name));
+
     if (!items.length) {
-      el.list.innerHTML = `<div class="empty-state"><p>No hay productos. Pulsa “+ Agregar” o “Restaurar carta”.</p></div>`;
+      el.list.innerHTML = `<div class="empty-state"><p>No hay productos. Pulsa “+ Agregar”.</p></div>`;
       return;
     }
-    el.list.innerHTML = items
-      .map((p) => {
-        const img = p.image
-          ? `<img src="/${p.image.replace(/^\//, "")}" alt="" onerror="this.style.opacity=.2" />`
-          : `<div class="card-placeholder"></div>`;
-        return `
-        <article class="card" data-id="${p.id}">
-          ${img}
-          <div>
-            <h3>${p.name}${p.active === false ? " · oculto" : ""}</h3>
-            <p>${p.desc || p.description || "Sin descripción"}</p>
-          </div>
-          <div class="price">${money(p.price)}</div>
-        </article>`;
-      })
-      .join("");
+    el.list.innerHTML = items.map(productCard).join("");
   }
 
   function openEditor(product) {
-    const productType =
-      product?.type || (currentView === "custom" ? "custom" : currentView);
+    let productType = product?.type;
+    if (!productType) {
+      if (isSectionView()) productType = "custom";
+      else productType = currentView;
+    }
+
     editingId = product?.id || null;
     el.editorTitle.textContent = editingId ? "Editar producto" : "Nuevo producto";
     el.deleteBtn.hidden = !editingId;
     el.editorError.hidden = true;
-    fillCategorySelects();
+    fillBurritoFilters();
 
     document.getElementById("f_type").value = productType;
     document.getElementById("f_id").value = product?.id || "";
@@ -309,7 +311,7 @@
     document.getElementById("f_active").checked = product?.active !== false;
 
     document.getElementById("f_category").value =
-      product?.category || catsByScope("burrito")[0]?.id || "solo";
+      product?.category || burritoFilters()[0]?.id || "solo";
     document.getElementById("f_tag").value = product?.tag || "";
     document.getElementById("f_tagStyle").value = product?.tagStyle || "";
     document.getElementById("f_heat").value = String(product?.heat ?? 0);
@@ -320,8 +322,13 @@
     document.getElementById("poteExtraFields").hidden = !isPote;
     document.getElementById("f_flavors").value = (product?.flavors || []).join(", ");
     document.getElementById("f_pick").value = product?.pick || 3;
-    document.getElementById("f_customCategory").value =
-      product?.category || sectionCats().filter((c) => c.active !== false)[0]?.id || "";
+
+    const secId = product?.category || sectionIdFromView();
+    const sec = categories.find((c) => c.id === secId);
+    document.getElementById("f_customCategory").value = secId || "";
+    document.getElementById("f_customHint").textContent = sec
+      ? `Se publicará en la sección “${sec.label}”.`
+      : "Se publicará en esta sección.";
     document.getElementById("f_customTag").value = product?.tag || "";
 
     setTypeFields(productType);
@@ -330,7 +337,7 @@
 
   function openBlockEditor(cat) {
     editingBlockId = cat?.id || null;
-    el.blockTitle.textContent = editingBlockId ? "Editar bloque" : "Nuevo bloque";
+    el.blockTitle.textContent = editingBlockId ? "Editar sección" : "Nueva sección";
     el.deleteBlockBtn.hidden = !editingBlockId;
     el.blockError.hidden = true;
     document.getElementById("b_id").value = cat?.id || "";
@@ -395,7 +402,8 @@
     }
     if (type === "custom") {
       payload.kind = "custom";
-      payload.category = document.getElementById("f_customCategory").value;
+      payload.category =
+        document.getElementById("f_customCategory").value || sectionIdFromView();
       payload.tag = document.getElementById("f_customTag").value.trim();
     }
     return payload;
@@ -409,7 +417,11 @@
     ]);
     products = prodData.products || [];
     categories = catData.categories || [];
-    el.statusLine.textContent = `${products.length} productos · actualizado ${new Date().toLocaleTimeString("es-CL")}`;
+    el.statusLine.textContent = `${products.length} productos · ${new Date().toLocaleTimeString("es-CL")}`;
+
+    if (isSectionView() && !currentSection()) {
+      currentView = "burrito";
+    }
     renderList();
   }
 
@@ -437,35 +449,28 @@
     showLogin();
   });
 
-  document.querySelectorAll(".tab").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".tab").forEach((b) => b.classList.remove("is-active"));
-      btn.classList.add("is-active");
-      currentView = btn.dataset.view;
-      renderList();
-    });
+  el.tabs.addEventListener("click", (e) => {
+    const add = e.target.closest("[data-action='add-section']");
+    if (add) {
+      openBlockEditor(null);
+      return;
+    }
+    const btn = e.target.closest("[data-view]");
+    if (!btn) return;
+    currentView = btn.dataset.view;
+    renderList();
   });
 
   el.newBtn.addEventListener("click", () => {
     if (currentView === "filters") openFilterEditor(null);
-    else if (currentView === "custom") {
-      if (!sectionCats().length) {
-        openBlockEditor(null);
-        return;
-      }
-      openEditor(null);
-    } else openEditor(null);
+    else openEditor(null);
   });
 
-  el.secondaryBtn.addEventListener("click", () => openBlockEditor(null));
+  el.secondaryBtn.addEventListener("click", () => {
+    if (isSectionView()) openBlockEditor(currentSection());
+  });
 
   el.list.addEventListener("click", (e) => {
-    const editBlock = e.target.closest("[data-edit-block]");
-    if (editBlock) {
-      const cat = categories.find((c) => c.id === editBlock.dataset.editBlock);
-      if (cat) openBlockEditor(cat);
-      return;
-    }
     const filterCard = e.target.closest("[data-filter-id]");
     if (filterCard) {
       const cat = categories.find((c) => c.id === filterCard.dataset.filterId);
@@ -499,7 +504,7 @@
       return;
     }
     if (payload.type === "custom" && !payload.category) {
-      el.editorError.textContent = "Primero crea un bloque (Postres, Promos…) y elígelo aquí.";
+      el.editorError.textContent = "Esta sección no es válida. Recarga e inténtalo.";
       el.editorError.hidden = false;
       return;
     }
@@ -542,7 +547,7 @@
     el.blockError.hidden = true;
     const label = document.getElementById("b_label").value.trim();
     if (!label) {
-      el.blockError.textContent = "Escribe el nombre del bloque.";
+      el.blockError.textContent = "Escribe el nombre (ej. Completos).";
       el.blockError.hidden = false;
       return;
     }
@@ -562,17 +567,15 @@
           method: "PUT",
           body: JSON.stringify(payload),
         });
+        currentView = `sec:${editingBlockId}`;
       } else {
         await api("/api/admin/categories", {
           method: "POST",
           body: JSON.stringify(payload),
         });
+        currentView = `sec:${id}`;
       }
       el.blockEditor.close();
-      currentView = "custom";
-      document.querySelectorAll(".tab").forEach((b) => {
-        b.classList.toggle("is-active", b.dataset.view === "custom");
-      });
       await refresh();
     } catch (err) {
       el.blockError.textContent = err.message;
@@ -582,12 +585,13 @@
 
   el.deleteBlockBtn.addEventListener("click", async () => {
     if (!editingBlockId) return;
-    if (!confirm("¿Eliminar este bloque? Debe estar vacío de productos.")) return;
+    if (!confirm("¿Eliminar esta sección? Debe estar sin productos.")) return;
     try {
       await api(`/api/admin/categories/${encodeURIComponent(editingBlockId)}`, {
         method: "DELETE",
       });
       el.blockEditor.close();
+      currentView = "burrito";
       await refresh();
     } catch (err) {
       el.blockError.textContent = err.message;
@@ -649,19 +653,12 @@
     }
   });
 
-  el.seedBtn.addEventListener("click", async () => {
-    if (!confirm("¿Restaurar la carta inicial? Puede sobrescribir productos existentes.")) return;
-    try {
-      const data = await api("/api/admin/products", {
-        method: "POST",
-        body: JSON.stringify({ action: "seed" }),
-      });
-      alert(`Listo: ${data.seeded} filas cargadas.`);
-      await refresh();
-    } catch (err) {
-      alert(err.message);
-    }
-  });
+  // Actualizar textos del diálogo de bloque
+  const blockHint = el.blockForm.querySelector(".field-hint");
+  if (blockHint) {
+    blockHint.textContent =
+      "Ejemplos: Completos, Postres, Promos. Aparecerá como pestaña al lado de Burritos y en la carta pública.";
+  }
 
   (async () => {
     if (!token) {

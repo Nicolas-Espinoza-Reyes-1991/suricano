@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="admin.css?v=4" />
+  <link rel="stylesheet" href="admin.css?v=5" />
 </head>
 <body>
   <div id="loginView" class="login-wrap">
@@ -36,21 +36,15 @@
         </div>
       </div>
       <div class="top-actions">
-        <button type="button" class="btn btn-ghost" id="seedBtn">Restaurar carta</button>
         <a class="btn btn-ghost" href="/" target="_blank" rel="noopener">Ver web</a>
         <button type="button" class="btn btn-ghost" id="logoutBtn">Salir</button>
       </div>
     </header>
 
-    <p class="nav-hint">Elige qué quieres editar. Todo lo que guardes se ve en la web.</p>
+    <p class="nav-hint">Cada pestaña es un menú de la carta. Creá una sección nueva (Completos, Postres…) y aparece aquí al lado.</p>
 
-    <nav class="tabs" role="tablist">
-      <button type="button" class="tab is-active" data-view="burrito">Burritos</button>
-      <button type="button" class="tab" data-view="papas">Papas</button>
-      <button type="button" class="tab" data-view="drink">Bebidas</button>
-      <button type="button" class="tab" data-view="extra">Extras</button>
-      <button type="button" class="tab" data-view="custom">Otros (Postres, Promos…)</button>
-      <button type="button" class="tab" data-view="filters">Filtros web</button>
+    <nav class="tabs" id="tabs" role="tablist">
+      <!-- pestañas dinámicas -->
     </nav>
 
     <main class="main">
@@ -148,10 +142,8 @@
         </div>
 
         <div id="customFields" class="type-fields" hidden>
-          <label>Bloque en la carta
-            <select id="f_customCategory"></select>
-          </label>
-          <p class="field-hint">Si no ves el bloque, créalo antes con “Nuevo bloque”.</p>
+          <input type="hidden" id="f_customCategory" />
+          <p class="field-hint" id="f_customHint">Este producto irá en esta sección de la carta.</p>
           <label>Etiqueta corta (opcional)
             <input id="f_customTag" />
           </label>
@@ -171,16 +163,16 @@
   <dialog id="blockEditor" class="editor">
     <form id="blockForm">
       <header>
-        <h3 id="blockTitle">Nuevo bloque</h3>
+        <h3 id="blockTitle">Nueva sección</h3>
         <button type="button" class="icon-btn" id="closeBlock" aria-label="Cerrar">×</button>
       </header>
       <div class="fields">
         <p class="field-hint">
-          Crea un bloque nuevo en la carta (ej. Postres, Promos). Después agregas productos ahí.
+          Ejemplos: Completos, Postres, Promos. Aparece como pestaña al lado de Burritos y en la carta de la web.
         </p>
         <input type="hidden" id="b_id" />
-        <label>Nombre del bloque
-          <input id="b_label" required placeholder="Ej: Postres" />
+        <label>Nombre de la sección
+          <input id="b_label" required placeholder="Ej: Completos" />
         </label>
         <label>Texto corto (opcional)
           <input id="b_desc" placeholder="Dulce para cerrar" />
@@ -188,10 +180,10 @@
         <label class="check"><input type="checkbox" id="b_active" checked /> Visible en la web</label>
       </div>
       <footer>
-        <button type="button" class="btn btn-danger" id="deleteBlockBtn" hidden>Eliminar bloque</button>
+        <button type="button" class="btn btn-danger" id="deleteBlockBtn" hidden>Eliminar sección</button>
         <div class="footer-right">
           <button type="button" class="btn btn-ghost" id="cancelBlock">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Guardar bloque</button>
+          <button type="submit" class="btn btn-primary">Guardar sección</button>
         </div>
       </footer>
       <p id="blockError" class="error" hidden></p>
@@ -231,6 +223,6 @@
     </form>
   </dialog>
 
-  <script src="admin.js?v=4"></script>
+  <script src="admin.js?v=5"></script>
 </body>
 </html>

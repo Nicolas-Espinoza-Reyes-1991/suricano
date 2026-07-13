@@ -262,9 +262,25 @@ input, textarea, select {
   white-space: nowrap;
 }
 
+.tab-section {
+  border-color: rgba(240, 180, 41, 0.28);
+}
+
 .tab.is-active {
   background: rgba(240, 180, 41, 0.16);
   border-color: rgba(240, 180, 41, 0.45);
+  color: var(--gold);
+}
+
+.tab-add {
+  border-style: dashed;
+  color: var(--gold);
+}
+
+.tab-add:hover,
+.tab-add:focus-visible {
+  background: rgba(240, 180, 41, 0.12);
+  border-color: rgba(240, 180, 41, 0.55);
   color: var(--gold);
 }
 

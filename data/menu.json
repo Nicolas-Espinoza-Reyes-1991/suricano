@@ -515,5 +515,48 @@
       "label": "Potes de aderezo"
     }
   ],
-  "updatedAt": "2026-07-13T19:49:44.612Z"
+  "updatedAt": "2026-07-13T19:49:44.612Z",
+  "custom": [],
+  "categories": [
+    {
+      "id": "solo",
+      "label": "Solo",
+      "scope": "burrito",
+      "description": "Burritos sin papas",
+      "sort_order": 1,
+      "active": true
+    },
+    {
+      "id": "papas",
+      "label": "Combo + papas",
+      "scope": "burrito",
+      "description": "Burritos con papas",
+      "sort_order": 2,
+      "active": true
+    },
+    {
+      "id": "size-1",
+      "label": "Individual",
+      "scope": "papas",
+      "description": "Porción 1 persona",
+      "sort_order": 1,
+      "active": true
+    },
+    {
+      "id": "size-2",
+      "label": "Para 2",
+      "scope": "papas",
+      "description": "Porción para compartir",
+      "sort_order": 2,
+      "active": true
+    },
+    {
+      "id": "size-4",
+      "label": "XL · 4",
+      "scope": "papas",
+      "description": "Porción XL",
+      "sort_order": 3,
+      "active": true
+    }
+  ]
 }

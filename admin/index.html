@@ -9,14 +9,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="admin.css" />
+  <link rel="stylesheet" href="admin.css?v=3" />
 </head>
 <body>
   <div id="loginView" class="login-wrap">
     <form id="loginForm" class="login-card">
       <img src="../assets/logo-circle.png?v=30" alt="" width="72" height="72" />
       <h1>Panel El Suricano</h1>
-      <p>Administra precios y productos. Acceso privado.</p>
+      <p>Administra precios, productos y categorías. Acceso privado.</p>
       <label>
         Clave de administrador
         <input type="password" id="password" autocomplete="current-password" required />
@@ -44,10 +44,12 @@
     </header>
 
     <nav class="tabs" role="tablist">
-      <button type="button" class="tab is-active" data-type="burrito">Burritos</button>
-      <button type="button" class="tab" data-type="papas">Papas</button>
-      <button type="button" class="tab" data-type="drink">Bebidas</button>
-      <button type="button" class="tab" data-type="extra">Extras</button>
+      <button type="button" class="tab is-active" data-view="burrito">Burritos</button>
+      <button type="button" class="tab" data-view="papas">Papas</button>
+      <button type="button" class="tab" data-view="drink">Bebidas</button>
+      <button type="button" class="tab" data-view="extra">Extras</button>
+      <button type="button" class="tab" data-view="custom">Secciones</button>
+      <button type="button" class="tab" data-view="categories">Categorías</button>
     </nav>
 
     <main class="main">
@@ -77,10 +79,7 @@
 
         <div id="burritoFields" class="type-fields" hidden>
           <label>Categoría
-            <select id="f_category">
-              <option value="solo">Solo</option>
-              <option value="papas">Combo + papas</option>
-            </select>
+            <select id="f_category"></select>
           </label>
           <label>Tag <input id="f_tag" /></label>
           <label>Estilo tag
@@ -116,6 +115,20 @@
           <label>Sabores (CSV, solo potes) <input id="f_flavors" placeholder="Mayo, Ají, Ketchup" /></label>
           <label>Pick <input id="f_pick" type="number" min="0" max="10" value="0" /></label>
         </div>
+
+        <div id="customFields" class="type-fields" hidden>
+          <label>Sección (categoría)
+            <select id="f_customCategory"></select>
+          </label>
+          <label>Tag <input id="f_customTag" /></label>
+          <label>Estilo tag
+            <select id="f_customTagStyle">
+              <option value="">Normal</option>
+              <option value="is-fresh">Fresh</option>
+              <option value="is-hot">Hot</option>
+            </select>
+          </label>
+        </div>
       </div>
       <footer>
         <button type="button" class="btn btn-danger" id="deleteBtn" hidden>Eliminar</button>
@@ -128,6 +141,40 @@
     </form>
   </dialog>
 
-  <script src="admin.js"></script>
+  <dialog id="catEditor" class="editor">
+    <form id="catForm" method="dialog">
+      <header>
+        <h3 id="catEditorTitle">Categoría</h3>
+        <button type="button" class="icon-btn" id="closeCatEditor" aria-label="Cerrar">×</button>
+      </header>
+      <div class="fields">
+        <label>ID <input id="c_id" required pattern="[a-z0-9\-]+" title="minúsculas, números y guiones" /></label>
+        <label>Nombre <input id="c_label" required /></label>
+        <label>Ámbito
+          <select id="c_scope">
+            <option value="burrito">Filtro de burritos</option>
+            <option value="papas">Filtro de papas</option>
+            <option value="section">Sección nueva en la carta</option>
+          </select>
+        </label>
+        <label>Descripción <textarea id="c_desc" rows="2"></textarea></label>
+        <label>Orden <input id="c_sort" type="number" min="0" step="1" value="1" /></label>
+        <label class="check"><input type="checkbox" id="c_active" checked /> Visible</label>
+        <p class="hint" style="margin:0;text-align:left">
+          <strong>Sección nueva</strong> aparece en la web como bloque propio. Luego crea productos en la pestaña Secciones.
+        </p>
+      </div>
+      <footer>
+        <button type="button" class="btn btn-danger" id="deleteCatBtn" hidden>Eliminar</button>
+        <div class="footer-right">
+          <button type="button" class="btn btn-ghost" id="cancelCatBtn">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </footer>
+      <p id="catError" class="error" hidden></p>
+    </form>
+  </dialog>
+
+  <script src="admin.js?v=2"></script>
 </body>
 </html>

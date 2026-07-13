@@ -13,6 +13,10 @@
     address: "Av. Principal 123, tu ciudad",
   };
 
+  const CART_KEY = "suricano_cart_v1";
+  const LAST_ORDER_KEY = "suricano_last_order_v1";
+  const ETA_LABEL = "Retiro estimado · 15–20 min";
+
   const IMG = "img_carta/burros";
   const IMG_DRINKS = "img_carta/bebidas";
   const IMG_PAPAS = "img_carta/papas";
@@ -427,13 +431,22 @@
     { id: "potes", label: "Potes de aderezo" },
   ];
 
-  const FILTER_META = {
+  let CUSTOM = [];
+  let CATEGORIES = [
+    { id: "solo", label: "Solo", scope: "burrito", sort_order: 1, active: true },
+    { id: "papas", label: "Combo + papas", scope: "burrito", sort_order: 2, active: true },
+    { id: "size-1", label: "Individual", scope: "papas", sort_order: 1, active: true },
+    { id: "size-2", label: "Para 2", scope: "papas", sort_order: 2, active: true },
+    { id: "size-4", label: "XL · 4", scope: "papas", sort_order: 3, active: true },
+  ];
+
+  let FILTER_META = {
     todos: { title: "Burritos", sub: "14 productos · de a dos" },
     solo: { title: "Solo burrito", sub: "7 productos · de a dos" },
     papas: { title: "Combo + papas", sub: "7 productos · de a dos" },
   };
 
-  const PAPAS_FILTER_META = {
+  let PAPAS_FILTER_META = {
     todos: { sub: "18 productos" },
     1: { sub: "6 opciones · 1 persona" },
     2: { sub: "6 opciones · para 2" },
@@ -447,6 +460,9 @@
     filter: "todos",
     papasFilter: "todos",
     poteDraft: null,
+    orderNote: "",
+    upsellShown: false,
+    skipPersist: false,
   };
 
   const $ = (sel, root = document) => root.querySelector(sel);
@@ -536,8 +552,141 @@
     return (
       MENU.find((m) => m.id === id) ||
       PAPAS.find((p) => p.id === id) ||
-      DRINKS.find((d) => d.id === id)
+      DRINKS.find((d) => d.id === id) ||
+      CUSTOM.find((c) => c.id === id)
     );
+  }
+
+  function activeCats(scope) {
+    return CATEGORIES.filter((c) => c.scope === scope && c.active !== false).sort(
+      (a, b) => (a.sort_order || 0) - (b.sort_order || 0)
+    );
+  }
+
+  function papasSizeKey(cat) {
+    const m = String(cat.id).match(/(\d+)/);
+    return m ? m[1] : null;
+  }
+
+  function rebuildFilterMeta() {
+    FILTER_META = {
+      todos: {
+        title: "Burritos",
+        sub: `${MENU.length} productos · de a dos`,
+      },
+    };
+    activeCats("burrito").forEach((c) => {
+      const n = MENU.filter((m) => m.category === c.id).length;
+      FILTER_META[c.id] = {
+        title: c.label,
+        sub: `${n} productos · de a dos`,
+      };
+    });
+
+    PAPAS_FILTER_META = {
+      todos: { sub: `${PAPAS.length} productos` },
+    };
+    activeCats("papas").forEach((c) => {
+      const size = papasSizeKey(c);
+      if (!size) return;
+      const n = PAPAS.filter((p) => String(p.size) === size).length;
+      PAPAS_FILTER_META[size] = { sub: `${n} opciones · ${c.label}` };
+    });
+  }
+
+  function rebuildBurritoFilters() {
+    const root = $("#burritoFilters");
+    if (!root) return;
+    const cats = activeCats("burrito");
+    const parts = [
+      `<button class="filter-btn is-active" role="tab" aria-selected="true" data-filter="todos">
+        Todos <span class="filter-count">${MENU.length}</span>
+      </button>`,
+    ];
+    cats.forEach((c) => {
+      const n = MENU.filter((m) => m.category === c.id).length;
+      parts.push(
+        `<button class="filter-btn" role="tab" aria-selected="false" data-filter="${c.id}">
+          ${c.label} <span class="filter-count">${n}</span>
+        </button>`
+      );
+    });
+    root.innerHTML = parts.join("");
+  }
+
+  function rebuildPapasFilters() {
+    const root = $("#papasFilters");
+    if (!root) return;
+    const cats = activeCats("papas");
+    const parts = [
+      `<button class="filter-btn is-active" role="tab" aria-selected="true" data-papas-size="todos">
+        Todos <span class="filter-count">${PAPAS.length}</span>
+      </button>`,
+    ];
+    cats.forEach((c) => {
+      const size = papasSizeKey(c);
+      if (!size) return;
+      const n = PAPAS.filter((p) => String(p.size) === size).length;
+      parts.push(
+        `<button class="filter-btn" role="tab" aria-selected="false" data-papas-size="${size}">
+          ${c.label} <span class="filter-count">${n}</span>
+        </button>`
+      );
+    });
+    root.innerHTML = parts.join("");
+  }
+
+  function updateNavSections() {
+    const navEl = $("#nav");
+    if (!navEl) return;
+    navEl.querySelectorAll("[data-dynamic-section]").forEach((a) => a.remove());
+    const bebidas = navEl.querySelector('a[href="#bebidas"]');
+    let insertAfter = bebidas;
+    activeCats("section").forEach((c) => {
+      const items = CUSTOM.filter((p) => p.category === c.id);
+      if (!items.length) return;
+      const a = document.createElement("a");
+      a.href = `#sec-${c.id}`;
+      a.textContent = c.label;
+      a.dataset.dynamicSection = c.id;
+      if (insertAfter) {
+        insertAfter.after(a);
+        insertAfter = a;
+      } else {
+        navEl.appendChild(a);
+      }
+    });
+  }
+
+  function renderCustomSections() {
+    const host = $("#customSections");
+    if (!host) return;
+    const sections = activeCats("section");
+    host.innerHTML = sections
+      .map((c) => {
+        const items = CUSTOM.filter((p) => p.category === c.id);
+        if (!items.length) return "";
+        return `
+        <div class="catalog-block" id="sec-${c.id}">
+          <div class="menu-heading">
+            <h3>${c.label}</h3>
+            <p>${c.description || `${items.length} productos`}</p>
+          </div>
+          <div class="menu-grid" data-custom-grid="${c.id}" aria-live="polite">
+            ${items.map((item, i) => menuCardHTML(item, i)).join("")}
+          </div>
+        </div>`;
+      })
+      .join("");
+    revealCards(host);
+    updateNavSections();
+    updateShopRail();
+    if (window.__suricanoShopIO) {
+      sections.forEach((c) => {
+        const el = document.getElementById(`sec-${c.id}`);
+        if (el) window.__suricanoShopIO.observe(el);
+      });
+    }
   }
 
   function heatBars(level) {
@@ -622,6 +771,8 @@
 
   function renderDrinks() {
     if (!drinksGrid) return;
+    const sub = $("#drinksSubheading");
+    if (sub) sub.textContent = `${DRINKS.length} productos`;
     drinksGrid.innerHTML = DRINKS.map((item, i) =>
       menuCardHTML(item, i, { contain: true })
     ).join("");
@@ -716,11 +867,13 @@
     syncQtyUI();
     renderOrder();
     updateTray();
+    persistCart();
   }
 
-  function addOne(id) {
+  function addOne(id, { silentUpsell = false } = {}) {
     setQty(id, getQty(id) + 1);
     const item = findProduct(id);
+    haptic(14);
     showToast(`${item.name} al pedido`, { action: true });
     popCartFloat();
     $$(`[data-add="${id}"]`).forEach((btn) => {
@@ -729,17 +882,18 @@
       setTimeout(() => {
         btn.classList.remove("is-added");
         const qty = getQty(id);
-        if (btn.classList.contains("spot-add") || btn.textContent.includes("quiero")) {
+        if (btn.classList.contains("spot-add") || /quiero|Otro/i.test(btn.textContent)) {
           btn.textContent = qty > 0 ? "Otro más" : "Lo quiero";
         } else {
           btn.textContent = qty > 0 ? "Agregar otro" : "Agregar";
         }
       }, 1100);
     });
+    if (!silentUpsell) maybeOfferUpsell(item);
   }
 
   function syncQtyUI() {
-    [...MENU, ...PAPAS, ...DRINKS].forEach((item) => {
+    [...MENU, ...PAPAS, ...DRINKS, ...CUSTOM].forEach((item) => {
       const qty = getQty(item.id);
       $$(`[data-qty="${item.id}"]`).forEach((el) => {
         el.textContent = String(qty);
@@ -768,7 +922,7 @@
   }
 
   function burritoEntries() {
-    return cartEntries().filter((e) => e.kind !== "drink" && e.kind !== "papas");
+    return cartEntries().filter((e) => MENU.some((m) => m.id === e.id));
   }
 
   function drinkEntries() {
@@ -777,6 +931,10 @@
 
   function papasEntries() {
     return cartEntries().filter((e) => e.kind === "papas");
+  }
+
+  function customEntries() {
+    return cartEntries().filter((e) => CUSTOM.some((c) => c.id === e.id));
   }
 
   function extraEntries() {
@@ -813,6 +971,7 @@
     else state.extras.set(id, qty);
     renderOrder();
     updateTray();
+    persistCart();
   }
 
   function renderExtrasPanel() {
@@ -896,6 +1055,7 @@
 
     orderEmpty.hidden = !empty;
     orderFooter.hidden = empty;
+    updateRepeatBtn();
     orderList.innerHTML = entries
       .map(
         (e) => `
@@ -977,13 +1137,23 @@
     closePoteModal();
     renderOrder();
     updateTray();
+    persistCart();
     popCartFloat();
     showToast(`${item.name} agregado`, { action: true });
+  }
+
+  function haptic(ms = 12) {
+    try {
+      if (navigator.vibrate) navigator.vibrate(ms);
+    } catch (_) {
+      /* ignore */
+    }
   }
 
   function openCart() {
     lastFocus = document.activeElement;
     cartBackdrop.hidden = false;
+    cartDrawer.style.transform = "";
     requestAnimationFrame(() => {
       cartBackdrop.classList.add("is-open");
       cartDrawer.classList.add("is-open");
@@ -996,7 +1166,10 @@
   function closeCart() {
     if (!$("#poteModal").hidden) closePoteModal();
     cartBackdrop.classList.remove("is-open");
+    cartBackdrop.style.opacity = "";
     cartDrawer.classList.remove("is-open");
+    cartDrawer.classList.remove("is-dragging");
+    cartDrawer.style.transform = "";
     cartDrawer.setAttribute("aria-hidden", "true");
     document.body.style.overflow = "";
     setTimeout(() => {
@@ -1007,6 +1180,67 @@
     if (lastFocus && typeof lastFocus.focus === "function") {
       lastFocus.focus();
     }
+  }
+
+  function initCartSwipe() {
+    if (!cartDrawer || !window.matchMedia("(max-width: 768px)").matches) {
+      // still bind; media can change — use runtime check
+    }
+    let startY = 0;
+    let currentY = 0;
+    let dragging = false;
+
+    const onStart = (y) => {
+      if (!cartDrawer.classList.contains("is-open")) return;
+      if (window.matchMedia("(min-width: 769px)").matches) return;
+      const panel = $("#orderPanel");
+      if (panel && panel.scrollTop > 0) return;
+      startY = y;
+      currentY = y;
+      dragging = true;
+      cartDrawer.classList.add("is-dragging");
+    };
+
+    const onMove = (y) => {
+      if (!dragging) return;
+      currentY = y;
+      const dy = Math.max(0, currentY - startY);
+      cartDrawer.style.transform = `translateY(${dy}px)`;
+      cartBackdrop.style.opacity = String(Math.max(0.15, 1 - dy / 380));
+    };
+
+    const onEnd = () => {
+      if (!dragging) return;
+      dragging = false;
+      cartDrawer.classList.remove("is-dragging");
+      const dy = Math.max(0, currentY - startY);
+      cartBackdrop.style.opacity = "";
+      if (dy > 110) {
+        cartDrawer.style.transform = "";
+        closeCart();
+      } else {
+        cartDrawer.style.transform = "";
+      }
+    };
+
+    cartDrawer.addEventListener(
+      "touchstart",
+      (e) => {
+        if (e.touches.length !== 1) return;
+        onStart(e.touches[0].clientY);
+      },
+      { passive: true }
+    );
+    cartDrawer.addEventListener(
+      "touchmove",
+      (e) => {
+        if (!dragging || e.touches.length !== 1) return;
+        onMove(e.touches[0].clientY);
+      },
+      { passive: true }
+    );
+    cartDrawer.addEventListener("touchend", onEnd, { passive: true });
+    cartDrawer.addEventListener("touchcancel", onEnd, { passive: true });
   }
 
   function popCartFloat() {
@@ -1044,8 +1278,11 @@
     const burritos = burritoEntries();
     const papas = papasEntries();
     const drinks = drinkEntries();
+    const custom = customEntries();
     const extras = extraEntries();
-    if (!burritos.length && !papas.length && !drinks.length) return WHATSAPP_GREETING;
+    if (!burritos.length && !papas.length && !drinks.length && !custom.length) {
+      return WHATSAPP_GREETING;
+    }
 
     const lines = ["¡Hola El Suricano! Quiero este pedido:", ""];
     let needGap = false;
@@ -1064,6 +1301,15 @@
     pushSection("Papas", papas);
     pushSection("Bebidas", drinks);
 
+    activeCats("section").forEach((c) => {
+      const items = custom.filter((e) => e.category === c.id);
+      pushSection(c.label, items);
+    });
+    const orphan = custom.filter(
+      (e) => !activeCats("section").some((c) => c.id === e.category)
+    );
+    pushSection("Otros", orphan);
+
     if (extras.length || state.poteOrders.length) {
       if (needGap) lines.push("");
       lines.push("*Extras*");
@@ -1077,21 +1323,320 @@
       });
     }
 
+    const note = (state.orderNote || "").trim();
+    if (note) {
+      if (needGap) lines.push("");
+      lines.push("*Nota:*", note);
+    }
+
     lines.push(
       "",
       `*Total estimado: ${formatPrice(cartTotal())}*`,
+      ETA_LABEL,
       "",
       "¿Me confirman tiempo de preparación? 🙏"
     );
     return lines.join("\n");
   }
 
-  function sendOrder() {
+  function persistCart() {
+    if (state.skipPersist) return;
+    try {
+      const payload = {
+        cart: [...state.cart.entries()],
+        extras: [...state.extras.entries()],
+        poteOrders: state.poteOrders,
+        orderNote: state.orderNote || "",
+        savedAt: Date.now(),
+      };
+      localStorage.setItem(CART_KEY, JSON.stringify(payload));
+    } catch (_) {
+      /* storage full / privado */
+    }
+  }
+
+  function restoreCart() {
+    try {
+      const raw = localStorage.getItem(CART_KEY);
+      if (!raw) return false;
+      const data = JSON.parse(raw);
+      state.skipPersist = true;
+      state.cart = new Map(
+        (data.cart || []).filter(([id, qty]) => findProduct(id) && qty > 0)
+      );
+      state.extras = new Map(
+        (data.extras || []).filter(([id, qty]) => EXTRAS.some((e) => e.id === id) && qty > 0)
+      );
+      state.poteOrders = Array.isArray(data.poteOrders) ? data.poteOrders : [];
+      state.orderNote = data.orderNote || "";
+      const noteEl = $("#orderNote");
+      if (noteEl) noteEl.value = state.orderNote;
+      state.skipPersist = false;
+      return state.cart.size > 0 || state.extras.size > 0 || state.poteOrders.length > 0;
+    } catch (_) {
+      state.skipPersist = false;
+      return false;
+    }
+  }
+
+  function saveLastOrder() {
+    try {
+      localStorage.setItem(
+        LAST_ORDER_KEY,
+        JSON.stringify({
+          cart: [...state.cart.entries()],
+          extras: [...state.extras.entries()],
+          poteOrders: state.poteOrders,
+          orderNote: state.orderNote || "",
+          savedAt: Date.now(),
+        })
+      );
+    } catch (_) {
+      /* ignore */
+    }
+  }
+
+  function hasLastOrder() {
+    try {
+      const raw = localStorage.getItem(LAST_ORDER_KEY);
+      if (!raw) return false;
+      const data = JSON.parse(raw);
+      return Array.isArray(data.cart) && data.cart.length > 0;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function repeatLastOrder() {
+    try {
+      const data = JSON.parse(localStorage.getItem(LAST_ORDER_KEY) || "null");
+      if (!data) return;
+      state.skipPersist = true;
+      state.cart = new Map(
+        (data.cart || []).filter(([id, qty]) => findProduct(id) && qty > 0)
+      );
+      state.extras = new Map(
+        (data.extras || []).filter(([id, qty]) => EXTRAS.some((e) => e.id === id) && qty > 0)
+      );
+      state.poteOrders = Array.isArray(data.poteOrders) ? data.poteOrders : [];
+      state.orderNote = data.orderNote || "";
+      const noteEl = $("#orderNote");
+      if (noteEl) noteEl.value = state.orderNote;
+      state.skipPersist = false;
+      syncQtyUI();
+      renderOrder();
+      updateTray();
+      persistCart();
+      showToast("Último pedido restaurado", { action: true });
+      openCart();
+    } catch (_) {
+      showToast("No pude restaurar el pedido");
+    }
+  }
+
+  function updateRepeatBtn() {
+    const btn = $("#repeatLastBtn");
+    if (!btn) return;
+    btn.hidden = cartCount() > 0 || !hasLastOrder();
+  }
+
+  function openSheet(id) {
+    const modal = $(id);
+    if (!modal) return;
+    modal.hidden = false;
+    requestAnimationFrame(() => modal.classList.add("is-open"));
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeSheet(id) {
+    const modal = $(id);
+    if (!modal) return;
+    modal.classList.remove("is-open");
+    setTimeout(() => {
+      if (!modal.classList.contains("is-open")) modal.hidden = true;
+      const anySheet =
+        $("#confirmModal")?.classList.contains("is-open") ||
+        $("#upsellModal")?.classList.contains("is-open");
+      if (!anySheet && !cartDrawer.classList.contains("is-open")) {
+        document.body.style.overflow = "";
+      }
+    }, 320);
+  }
+
+  function openConfirm() {
     if (!cartEntries().length) {
       showToast("Agrega algo de la carta primero");
       return;
     }
+    const list = $("#confirmList");
+    const total = $("#confirmTotal");
+    const eta = $("#confirmEta");
+    if (eta) eta.textContent = ETA_LABEL;
+    if (total) total.textContent = formatPrice(cartTotal());
+    if (list) {
+      const rows = [];
+      cartEntries().forEach((e) => {
+        rows.push(
+          `<li><span>${e.qty}× ${e.name}</span><strong>${formatPrice(e.subtotal)}</strong></li>`
+        );
+      });
+      extraEntries().forEach((e) => {
+        rows.push(
+          `<li><span>${e.qty}× ${e.name}</span><strong>${formatPrice(e.subtotal)}</strong><span class="confirm-meta">Extra</span></li>`
+        );
+      });
+      state.poteOrders.forEach((p) => {
+        rows.push(
+          `<li><span>1× ${p.name}</span><strong>${formatPrice(p.price)}</strong><span class="confirm-meta">${p.flavors.join(", ")}</span></li>`
+        );
+      });
+      list.innerHTML = rows.join("");
+    }
+    const noteEl = $("#orderNote");
+    if (noteEl) noteEl.value = state.orderNote || "";
+    openSheet("#confirmModal");
+  }
+
+  function closeConfirm() {
+    closeSheet("#confirmModal");
+  }
+
+  function finalizeWhatsApp() {
+    const noteEl = $("#orderNote");
+    state.orderNote = noteEl ? noteEl.value.trim() : state.orderNote;
+    persistCart();
+    saveLastOrder();
     window.open(waUrl(buildWhatsAppMessage()), "_blank", "noopener,noreferrer");
+    closeConfirm();
+    showToast("Abriendo WhatsApp…");
+  }
+
+  function maybeOfferUpsell(item) {
+    if (!item || state.upsellShown) return;
+    const isBurrito = MENU.some((m) => m.id === item.id);
+    if (!isBurrito) return;
+    if (papasEntries().length || drinkEntries().length) return;
+    const pickPapas =
+      PAPAS.find((p) => p.featured) ||
+      PAPAS.find((p) => Number(p.size) === 1) ||
+      PAPAS[0];
+    const pickDrink = DRINKS[0];
+    if (!pickPapas && !pickDrink) return;
+    state.upsellShown = true;
+    const cards = $("#upsellCards");
+    if (!cards) return;
+    const options = [pickPapas, pickDrink].filter(Boolean);
+    cards.innerHTML = options
+      .map(
+        (o) => `
+      <button type="button" class="upsell-card" data-upsell-add="${o.id}">
+        <img src="${o.image}" alt="" width="72" height="72" loading="lazy" />
+        <div>
+          <strong>${o.name}</strong>
+          <span>${o.kind === "drink" ? "Bebida" : "Papas"}</span>
+        </div>
+        <span class="upsell-price">${formatPrice(o.price)}</span>
+      </button>`
+      )
+      .join("");
+    window.setTimeout(() => openSheet("#upsellModal"), 420);
+  }
+
+  function closeUpsell() {
+    closeSheet("#upsellModal");
+  }
+
+  function updateShopRail() {
+    const railBurritos = $("#railBurritos");
+    const railPapas = $("#railPapas");
+    const railBebidas = $("#railBebidas");
+    if (railBurritos) railBurritos.textContent = String(MENU.length);
+    if (railPapas) railPapas.textContent = String(PAPAS.length);
+    if (railBebidas) railBebidas.textContent = String(DRINKS.length);
+
+    const rail = $("#shopRail");
+    if (!rail) return;
+    rail.querySelectorAll("[data-dynamic-rail]").forEach((b) => b.remove());
+    activeCats("section").forEach((c) => {
+      const items = CUSTOM.filter((p) => p.category === c.id);
+      if (!items.length) return;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "shop-rail-btn";
+      btn.dataset.shop = `sec-${c.id}`;
+      btn.dataset.dynamicRail = c.id;
+      btn.innerHTML = `${c.label} <span class="shop-rail-count">${items.length}</span>`;
+      rail.appendChild(btn);
+    });
+
+    const chrome = $("#shopChrome");
+    if (chrome) {
+      const h = Math.ceil(chrome.getBoundingClientRect().height);
+      document.documentElement.style.setProperty("--shop-chrome-h", `${h}px`);
+    }
+  }
+
+  function setActiveShop(id) {
+    $$("#shopRail .shop-rail-btn").forEach((btn) => {
+      btn.classList.toggle("is-active", btn.dataset.shop === id);
+    });
+  }
+
+  function scrollToShop(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    setActiveShop(id);
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function initShopChrome() {
+    const rail = $("#shopRail");
+    const chrome = $("#shopChrome");
+    if (!rail || !chrome) return;
+
+    updateShopRail();
+
+    rail.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-shop]");
+      if (!btn) return;
+      scrollToShop(btn.dataset.shop);
+    });
+
+    const sectionIds = ["burritos", "papas", "bebidas"];
+    const observed = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter(Boolean);
+
+    if ("IntersectionObserver" in window && observed.length) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          const visible = entries
+            .filter((en) => en.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+          if (visible[0]?.target?.id) setActiveShop(visible[0].target.id);
+        },
+        {
+          rootMargin: `-${Math.round(78 + 56)}px 0px -45% 0px`,
+          threshold: [0.15, 0.35, 0.55],
+        }
+      );
+      observed.forEach((el) => io.observe(el));
+      // custom sections observed after render
+      window.__suricanoShopIO = io;
+    }
+
+    window.addEventListener(
+      "resize",
+      () => {
+        const h = Math.ceil(chrome.getBoundingClientRect().height);
+        document.documentElement.style.setProperty("--shop-chrome-h", `${h}px`);
+      },
+      { passive: true }
+    );
+  }
+
+  function sendOrder() {
+    openConfirm();
   }
 
   let toastTimer;
@@ -1116,13 +1661,21 @@
   }
 
   function bindEvents() {
-    $$("#burritoFilters .filter-btn").forEach((btn) => {
-      btn.addEventListener("click", () => applyFilter(btn.dataset.filter));
-    });
+    const burritoFilters = $("#burritoFilters");
+    if (burritoFilters) {
+      burritoFilters.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-filter]");
+        if (btn) applyFilter(btn.dataset.filter);
+      });
+    }
 
-    $$("#papasFilters .filter-btn").forEach((btn) => {
-      btn.addEventListener("click", () => applyPapasFilter(btn.dataset.papasSize));
-    });
+    const papasFilters = $("#papasFilters");
+    if (papasFilters) {
+      papasFilters.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-papas-size]");
+        if (btn) applyPapasFilter(btn.dataset.papasSize);
+      });
+    }
 
     const onAddClick = (e) => {
       const add = e.target.closest("[data-add]");
@@ -1136,6 +1689,8 @@
     menuGrid.addEventListener("click", onAddClick);
     papasGrid.addEventListener("click", onAddClick);
     drinksGrid.addEventListener("click", onAddClick);
+    const customHost = $("#customSections");
+    if (customHost) customHost.addEventListener("click", onAddClick);
     orderList.addEventListener("click", handleQtyClick);
 
     $("#extrasGroups").addEventListener("click", (e) => {
@@ -1149,6 +1704,7 @@
         state.poteOrders.splice(Number(removePote.dataset.poteRemove), 1);
         renderOrder();
         updateTray();
+        persistCart();
         return;
       }
       const extraBtn = e.target.closest("[data-extra-action]");
@@ -1177,11 +1733,49 @@
       state.cart.clear();
       state.extras.clear();
       state.poteOrders = [];
+      state.orderNote = "";
+      const noteEl = $("#orderNote");
+      if (noteEl) noteEl.value = "";
       syncQtyUI();
       renderOrder();
       updateTray();
+      persistCart();
       showToast("Pedido vaciado");
     });
+
+    const repeatBtn = $("#repeatLastBtn");
+    if (repeatBtn) repeatBtn.addEventListener("click", repeatLastOrder);
+
+    const confirmModal = $("#confirmModal");
+    if (confirmModal) {
+      confirmModal.addEventListener("click", (e) => {
+        if (e.target.closest("[data-confirm-close]")) closeConfirm();
+      });
+    }
+    const confirmSend = $("#confirmSendWa");
+    if (confirmSend) confirmSend.addEventListener("click", finalizeWhatsApp);
+    const orderNote = $("#orderNote");
+    if (orderNote) {
+      orderNote.addEventListener("input", () => {
+        state.orderNote = orderNote.value;
+        persistCart();
+      });
+    }
+
+    const upsellModal = $("#upsellModal");
+    if (upsellModal) {
+      upsellModal.addEventListener("click", (e) => {
+        if (e.target.closest("[data-upsell-close]")) {
+          closeUpsell();
+          return;
+        }
+        const add = e.target.closest("[data-upsell-add]");
+        if (add) {
+          closeUpsell();
+          addOne(add.dataset.upsellAdd, { silentUpsell: true });
+        }
+      });
+    }
 
     cartFloat.addEventListener("click", openCart);
     cartClose.addEventListener("click", closeCart);
@@ -1202,6 +1796,14 @@
 
     document.addEventListener("keydown", (e) => {
       if (e.key !== "Escape") return;
+      if (!$("#upsellModal")?.hidden) {
+        closeUpsell();
+        return;
+      }
+      if (!$("#confirmModal")?.hidden) {
+        closeConfirm();
+        return;
+      }
       if (!$("#poteModal").hidden) {
         closePoteModal();
         return;
@@ -1278,9 +1880,18 @@
     if (Array.isArray(data.papas) && data.papas.length) PAPAS = data.papas;
     if (Array.isArray(data.drinks) && data.drinks.length) DRINKS = data.drinks;
     if (Array.isArray(data.extras) && data.extras.length) EXTRAS = data.extras;
+    if (Array.isArray(data.custom)) {
+      CUSTOM = data.custom.map((p) => ({ ...p, kind: p.kind || "custom" }));
+    }
+    if (Array.isArray(data.categories) && data.categories.length) {
+      CATEGORIES = data.categories;
+    }
     if (Array.isArray(data.extraGroups) && data.extraGroups.length) {
       EXTRA_GROUPS = data.extraGroups;
     }
+    rebuildFilterMeta();
+    rebuildBurritoFilters();
+    rebuildPapasFilters();
   }
 
   async function loadCatalog() {
@@ -1360,14 +1971,25 @@
     await loadCatalog();
     $("#year").textContent = String(new Date().getFullYear());
     initWhatsAppLinks();
+    rebuildFilterMeta();
+    rebuildBurritoFilters();
+    rebuildPapasFilters();
     renderMenu();
     renderPapas();
     renderDrinks();
+    renderCustomSections();
+    initShopChrome();
+    initCartSwipe();
+    const restored = restoreCart();
     syncQtyUI();
     renderOrder();
+    updateTray();
     bindEvents();
     initReveal();
     initHeroCarousel();
+    if (restored) {
+      showToast("Recuperamos tu pedido", { action: true });
+    }
   }
 
   boot();

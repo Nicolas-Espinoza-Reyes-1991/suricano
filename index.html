@@ -2,14 +2,18 @@
 <html lang="es-CL">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>El Suricano | Burritos mexicanos de a dos · Pedí por WhatsApp</title>
   <meta name="description" content="El Suricano: burritos mexicanos de a dos, sabor chingón a la vuelta de la esquina. Mitad del sur, mitad mexicano. Carta online y pedido por WhatsApp." />
   <meta name="keywords" content="El Suricano, burritos, comida mexicana, comida rápida, burritos de a dos, pedir WhatsApp, Fast Mexican" />
   <meta name="author" content="El Suricano" />
   <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="theme-color" content="#1a0f16" media="(prefers-color-scheme: dark)" />
   <meta name="theme-color" content="#1a0f16" />
   <meta name="format-detection" content="telephone=yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
 
   <!-- Open Graph / WhatsApp: logo actual -->
   <meta property="og:type" content="website" />
@@ -40,7 +44,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lilita+One&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=25" />
+  <link rel="stylesheet" href="css/styles.css?v=27" />
 
   <script type="application/ld+json">
   {
@@ -224,13 +228,13 @@
             width="1200"
             height="1200"
             decoding="async"
+            fetchpriority="high"
           />
         </div>
         <h1 class="hero-title">Sabor chingón<br />a la vuelta de la esquina</h1>
         <p class="hero-lead">Mitad del sur, mitad mexicano. 100% sabroso.</p>
         <div class="hero-cta">
-          <a class="btn btn-primary btn-hero" href="#carta">Ver la carta</a>
-          <a class="btn btn-secondary btn-hero" href="#carta" id="heroOrderCta">Armar pedido</a>
+          <a class="btn btn-primary btn-hero" href="#carta" id="heroOrderCta">Armar pedido</a>
         </div>
       </div>
       <a class="scroll-hint" href="#experiencia" aria-label="Bajar a experiencia">
@@ -268,6 +272,20 @@
         <p class="eyebrow reveal">La carta</p>
         <h2 class="section-title reveal">Sabor chingón, a tu gusto</h2>
         <p class="section-lead reveal">Burritos de a dos, papas cargadas y bebidas. Arma tu pedido y mándalo por WhatsApp.</p>
+
+        <div class="shop-chrome reveal" id="shopChrome">
+          <nav class="shop-rail" id="shopRail" aria-label="Secciones de la carta">
+            <button type="button" class="shop-rail-btn is-active" data-shop="burritos">
+              Burritos <span class="shop-rail-count" id="railBurritos">0</span>
+            </button>
+            <button type="button" class="shop-rail-btn" data-shop="papas">
+              Papas <span class="shop-rail-count" id="railPapas">0</span>
+            </button>
+            <button type="button" class="shop-rail-btn" data-shop="bebidas">
+              Bebidas <span class="shop-rail-count" id="railBebidas">0</span>
+            </button>
+          </nav>
+        </div>
 
         <div class="catalog-block catalog-block--first" id="burritos">
           <div class="menu-toolbar" id="menuToolbar">
@@ -317,10 +335,12 @@
         <div class="catalog-block" id="bebidas">
           <div class="menu-heading">
             <h3>Bebidas</h3>
-            <p>2 productos</p>
+            <p id="drinksSubheading">2 productos</p>
           </div>
           <div class="menu-grid menu-grid--pair" id="drinksGrid" aria-live="polite"></div>
         </div>
+
+        <div id="customSections"></div>
       </div>
     </section>
 
@@ -376,6 +396,7 @@
     aria-hidden="true"
     aria-labelledby="cartDrawerTitle"
   >
+    <div class="cart-drawer-handle" aria-hidden="true"></div>
     <div class="cart-drawer-head">
       <div>
         <p class="cart-drawer-eyebrow">Tu pedido</p>
@@ -389,6 +410,9 @@
         <p>Tu bandeja está vacía.</p>
         <p class="order-empty-hint">Elige de la carta y vuelve aquí para enviarlo.</p>
         <a class="btn btn-primary btn-sm" href="#carta" data-close-cart>Ver la carta</a>
+        <button type="button" class="btn btn-ghost btn-ghost-ink btn-sm" id="repeatLastBtn" hidden>
+          Repetir último pedido
+        </button>
       </div>
       <div class="extras-panel" id="extrasPanel" hidden>
         <div class="extras-head">
@@ -404,11 +428,67 @@
         <strong id="orderTotal">$0</strong>
       </div>
       <button class="btn btn-primary btn-block" id="sendWhatsApp" type="button">
-        Enviar pedido por WhatsApp
+        Revisar y enviar
       </button>
       <button class="btn btn-ghost btn-ghost-ink btn-block" id="clearOrder" type="button">Vaciar pedido</button>
     </div>
   </aside>
+
+  <div class="sheet-modal" id="confirmModal" hidden>
+    <div class="sheet-backdrop" data-confirm-close></div>
+    <div
+      class="sheet-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="confirmTitle"
+    >
+      <button type="button" class="sheet-close" data-confirm-close aria-label="Cerrar">×</button>
+      <p class="sheet-eyebrow">Último paso</p>
+      <h3 id="confirmTitle">Confirma tu pedido</h3>
+      <p class="sheet-eta" id="confirmEta">Retiro estimado · 15–20 min</p>
+      <ul class="confirm-list" id="confirmList"></ul>
+      <div class="confirm-total">
+        <span>Total estimado</span>
+        <strong id="confirmTotal">$0</strong>
+      </div>
+      <label class="sheet-label" for="orderNote">
+        Nota para la cocina <span>(opcional)</span>
+        <textarea
+          id="orderNote"
+          rows="2"
+          maxlength="280"
+          placeholder="Ej: sin cebolla, más picante, para llevar…"
+        ></textarea>
+      </label>
+      <div class="sheet-actions">
+        <button type="button" class="btn btn-primary btn-block" id="confirmSendWa">
+          Enviar por WhatsApp
+        </button>
+        <button type="button" class="btn btn-ghost btn-ghost-ink btn-block" data-confirm-close>
+          Seguir editando
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sheet-modal" id="upsellModal" hidden>
+    <div class="sheet-backdrop" data-upsell-close></div>
+    <div
+      class="sheet-dialog sheet-dialog--upsell"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="upsellTitle"
+    >
+      <button type="button" class="sheet-close" data-upsell-close aria-label="Cerrar">×</button>
+      <p class="sheet-eyebrow">Combínalo</p>
+      <h3 id="upsellTitle">¿Le sumamos algo?</h3>
+      <p class="sheet-lead" id="upsellLead">Tu burrito queda mejor con papas o una bebida fría.</p>
+      <div class="upsell-cards" id="upsellCards"></div>
+      <button type="button" class="btn btn-ghost btn-ghost-ink btn-block" data-upsell-close>
+        No, gracias
+      </button>
+    </div>
+  </div>
 
   <button type="button" class="cart-float" id="cartFloat" hidden aria-label="Ver pedido">
     <span class="cart-float-pulse" aria-hidden="true"></span>
@@ -460,6 +540,6 @@
     </div>
   </div>
 
-  <script src="js/main.js?v=31"></script>
+  <script src="js/main.js?v=34"></script>
 </body>
 </html>

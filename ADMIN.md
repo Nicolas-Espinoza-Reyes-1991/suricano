@@ -1,9 +1,14 @@
 # Panel admin El Suricano (Cloudflare · gratis)
 
 ## Qué incluye
-- `/admin` — panel privado para editar burritos, papas, bebidas y extras
-- `/api/menu` — carta pública (D1 o fallback `data/menu.json`)
+- `/admin` — panel privado para editar burritos, papas, bebidas, extras, secciones y categorías
+- `/api/menu` — carta pública (D1 o fallback `data/menu.json`), incluye `categories` y `custom`
 - Auth con `ADMIN_PASSWORD` (token 12 h)
+
+### Categorías
+- **burrito** → filtros de la sección Burritos
+- **papas** → filtros de tamaño (`size-1`, `size-2`, `size-4`)
+- **section** → bloque nuevo en la carta; productos tipo `custom` apuntan a esa categoría
 
 ## Setup en Cloudflare (una vez)
 

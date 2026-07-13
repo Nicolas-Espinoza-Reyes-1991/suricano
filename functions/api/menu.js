@@ -6,7 +6,18 @@ async function loadStaticMenu(request) {
   const res = await fetch(url.toString());
   if (!res.ok) throw new Error("No se pudo leer data/menu.json");
   const data = await res.json();
-  return { ...data, source: "json" };
+  return {
+    ...data,
+    custom: data.custom || [],
+    categories: data.categories || [
+      { id: "solo", label: "Solo", scope: "burrito", sort_order: 1, active: true },
+      { id: "papas", label: "Combo + papas", scope: "burrito", sort_order: 2, active: true },
+      { id: "size-1", label: "Individual", scope: "papas", sort_order: 1, active: true },
+      { id: "size-2", label: "Para 2", scope: "papas", sort_order: 2, active: true },
+      { id: "size-4", label: "XL · 4", scope: "papas", sort_order: 3, active: true },
+    ],
+    source: "json",
+  };
 }
 
 export async function onRequestOptions() {

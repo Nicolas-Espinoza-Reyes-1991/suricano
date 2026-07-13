@@ -61,6 +61,25 @@ async function seedFromStatic(request, db) {
   (data.papas || []).forEach((i) => push("papas", i));
   (data.drinks || []).forEach((i) => push("drink", i));
   (data.extras || []).forEach((i) => push("extra", i));
+  (data.custom || []).forEach((i) => push("custom", i));
+
+  for (const c of data.categories || []) {
+    stmts.push(
+      db
+        .prepare(
+          `INSERT OR REPLACE INTO categories (id, label, scope, description, sort_order, active, updated_at)
+           VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`
+        )
+        .bind(
+          c.id,
+          c.label,
+          c.scope,
+          c.description || "",
+          Number(c.sort_order) || 0,
+          c.active === false ? 0 : 1
+        )
+    );
+  }
 
   if (stmts.length) await db.batch(stmts);
   return stmts.length;
@@ -114,7 +133,7 @@ export async function onRequestPost(context) {
   }
 
   const type = body.type;
-  if (!["burrito", "papas", "drink", "extra"].includes(type)) {
+  if (!["burrito", "papas", "drink", "extra", "custom"].includes(type)) {
     return json({ error: "type inválido" }, 400);
   }
   if (!body.id || !body.name) {

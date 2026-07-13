@@ -1,4 +1,13 @@
 /** @param {import('@cloudflare/workers-types').D1Database | undefined} db */
+
+const DEFAULT_CATEGORIES = [
+  { id: "solo", label: "Solo", scope: "burrito", description: "Burritos sin papas", sort_order: 1 },
+  { id: "papas", label: "Combo + papas", scope: "burrito", description: "Burritos con papas", sort_order: 2 },
+  { id: "size-1", label: "Individual", scope: "papas", description: "Porción 1 persona", sort_order: 1 },
+  { id: "size-2", label: "Para 2", scope: "papas", description: "Porción para compartir", sort_order: 2 },
+  { id: "size-4", label: "XL · 4", scope: "papas", description: "Porción XL", sort_order: 3 },
+];
+
 export async function ensureSchema(db) {
   if (!db) return;
   await db
@@ -29,6 +38,45 @@ export async function ensureSchema(db) {
       )`
     )
     .run();
+
+  await db
+    .prepare(
+      `CREATE TABLE IF NOT EXISTS categories (
+        id TEXT PRIMARY KEY,
+        label TEXT NOT NULL,
+        scope TEXT NOT NULL,
+        description TEXT NOT NULL DEFAULT '',
+        sort_order INTEGER NOT NULL DEFAULT 0,
+        active INTEGER NOT NULL DEFAULT 1,
+        updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+      )`
+    )
+    .run();
+
+  const catCount = await db.prepare(`SELECT COUNT(*) AS c FROM categories`).first();
+  if (Number(catCount?.c || 0) === 0) {
+    const stmts = DEFAULT_CATEGORIES.map((c, i) =>
+      db
+        .prepare(
+          `INSERT OR IGNORE INTO categories (id, label, scope, description, sort_order, active, updated_at)
+           VALUES (?, ?, ?, ?, ?, 1, datetime('now'))`
+        )
+        .bind(c.id, c.label, c.scope, c.description || "", c.sort_order ?? i + 1)
+    );
+    if (stmts.length) await db.batch(stmts);
+  }
+}
+
+export function rowToCategory(row) {
+  if (!row) return null;
+  return {
+    id: row.id,
+    label: row.label,
+    scope: row.scope,
+    description: row.description || "",
+    sort_order: Number(row.sort_order) || 0,
+    active: row.active !== 0 && row.active !== false,
+  };
 }
 
 export function rowToProduct(row) {
@@ -72,6 +120,11 @@ export function rowToProduct(row) {
       }
     }
     if (row.pick != null) item.pick = Number(row.pick);
+  } else if (row.type === "custom") {
+    item.kind = "custom";
+    item.category = row.category || "";
+    item.tag = row.tag || "";
+    item.tagStyle = row.tag_style || "";
   }
 
   return item;
@@ -103,6 +156,15 @@ export function productToRow(product, type, sortOrder = 0) {
   };
 }
 
+export async function loadCategories(db, { includeInactive = false } = {}) {
+  await ensureSchema(db);
+  const sql = includeInactive
+    ? `SELECT * FROM categories ORDER BY scope ASC, sort_order ASC, label ASC`
+    : `SELECT * FROM categories WHERE active = 1 ORDER BY scope ASC, sort_order ASC, label ASC`;
+  const { results } = await db.prepare(sql).all();
+  return (results || []).map(rowToCategory);
+}
+
 export async function loadCatalogFromDb(db) {
   await ensureSchema(db);
   const { results } = await db
@@ -115,6 +177,7 @@ export async function loadCatalogFromDb(db) {
   const papas = [];
   const drinks = [];
   const extras = [];
+  const custom = [];
 
   for (const row of results || []) {
     const item = rowToProduct(row);
@@ -123,13 +186,18 @@ export async function loadCatalogFromDb(db) {
     else if (row.type === "papas") papas.push(item);
     else if (row.type === "drink") drinks.push(item);
     else if (row.type === "extra") extras.push(item);
+    else if (row.type === "custom") custom.push(item);
   }
+
+  const categories = await loadCategories(db);
 
   return {
     burritos,
     papas,
     drinks,
     extras,
+    custom,
+    categories,
     extraGroups: [
       { id: "proteinas", label: "Proteínas" },
       { id: "vegetales", label: "Vegetales" },
